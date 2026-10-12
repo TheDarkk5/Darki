@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Minecraft Three.js</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+      <!-- JEU -->
+  <div id="game"></div>
+
+<!-- ============================= -->
+<!-- HUD -->
+<!-- ============================= -->
+
+<div id="hud">
+
+    <!-- VIE + FAIM -->
+    <div id="status-bars">
+
+        <div id="health">
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+            <span>❤️</span>
+        </div>
+
+        <div id="hunger">
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+            <span>🍗</span>
+        </div>
+
+    </div>
+
+
+    <!-- XP -->
+    <div id="xp-level">
+        1
+    </div>
+
+    <div id="xp-bar">
+        <div id="xp-progress"></div>
+    </div>
+
+<!-- NOM DU BLOC SÉLECTIONNÉ -->
+<div id="selected-block-name">
+    Herbe
+</div>
+
+    <!-- HOTBAR -->
+    <div id="hotbar">
+
+        <div class="hotbar-slot selected" data-slot="0">
+            <span class="slot-number">1</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="1">
+            <span class="slot-number">2</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="2">
+            <span class="slot-number">3</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="3">
+            <span class="slot-number">4</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="4">
+            <span class="slot-number">5</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="5">
+            <span class="slot-number">6</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="6">
+            <span class="slot-number">7</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="7">
+            <span class="slot-number">8</span>
+        </div>
+
+        <div class="hotbar-slot" data-slot="8">
+            <span class="slot-number">9</span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="inventory">
+
+    <div class="inventory-window">
+
+<div id="crafting">
+    <h3>Fabrication</h3>
+
+    <div class="crafting-container">
+        <div class="crafting-grid">
+            <div class="craft-slot" data-craft="0"></div>
+            <div class="craft-slot" data-craft="1"></div>
+            <div class="craft-slot" data-craft="2"></div>
+            <div class="craft-slot" data-craft="3"></div>
+        </div>
+
+        <span class="craft-arrow">➜</span>
+
+        <div id="craft-result" class="craft-slot"></div>
+    </div>
+</div>
+
+        <div class="inventory-title">
+            Inventaire
+        </div>
+
+        <div id="inventory-grid">
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+
+
+            <!-- Cases vides -->
+
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+
+        </div>
+
+<div id="inventory-hotbar" aria-label="Barre rapide de l’inventaire">
+    <div class="inventory-hotbar-slot" data-hotbar-slot="0"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="1"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="2"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="3"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="4"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="5"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="6"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="7"></div>
+    <div class="inventory-hotbar-slot" data-hotbar-slot="8"></div>
+</div>
+
+        <div class="inventory-help">
+            E pour fermer
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- MENU PRINCIPAL -->
+    <div id="main-menu">
+
+        <div class="menu-container">
+
+            <h1 class="game-title">
+                DARKCRAFT
+            </h1>
+
+            <div class="game-subtitle">
+                THREE.JS
+            </div>
+
+            <button id="play-button" class="menu-button">
+                Jouer
+            </button>
+
+            <button id="options-button" class="menu-button">
+                Options
+            </button>
+
+            <button id="quit-button" class="menu-button">
+                Quitter
+            </button>
+
+        </div>
+
+
+        <div class="main-version">
+            Minecraft Three.js - Alpha
+        </div>
+
+    </div>
+    
+<!-- MENU OPTIONS -->
+<div id="options-menu">
+    <div class="options-container">
+        <h2>Options</h2>
+
+        <div class="option-setting">
+            <label for="render-distance">
+                Distance de rendu :
+                <span id="render-distance-value">3</span> chunks
+            </label>
+
+            <input
+                type="range"
+                id="render-distance"
+                min="2"
+                max="12"
+                value="3"
+                step="1"
+            >
+        </div>
+
+        <button id="options-back-button" class="menu-button">
+            Retour
+        </button>
+    </div>
+</div>
+
+            <!-- VISEUR -->   
+            <div id="crosshair">
+                +
+            </div>
+
+            <!-- MESSAGE POINTER LOCK -->
+            <div id="instructions">
+                Cliquez pour jouer
+            </div>
+    <script
+        type="module"
+        src="/src/main.js"
+    ></script>
+
+</body>
+
+</html>
