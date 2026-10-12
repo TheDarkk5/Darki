@@ -8,7 +8,7 @@ import {
     BLOCK_MATERIALS
 } from "../blocks/BlockMaterials.js";
 
-
+import { TreeGenerator } from "./TreeGenerator.js";
 // ==========================================
 // MATERIALS UTILISÉS PAR LES CHUNKS
 // ==========================================
@@ -21,6 +21,7 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.OAK_LOG[2], // 4 - Bois dessus/dessous
     BLOCK_MATERIALS.OAK_LOG[0],  // 5 - Bois côtés
     BLOCK_MATERIALS.OAK_PLANKS,
+    BLOCK_MATERIALS.OAK_LEAVES, // 7 - Feuilles de chêne
 ];
 
 
@@ -42,6 +43,7 @@ export class Chunk {
         this.scene = scene;
 
         this.world = world;
+        this.treeGenerator = new TreeGenerator(this.world.generator);
 
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
@@ -103,6 +105,10 @@ getMaterialIndex(blockId, normal) {
 
  if (blockId === BLOCK.OAK_PLANKS.id) {
         return 6;
+    }
+
+    if (blockId === BLOCK.OAK_LEAVES.id) {
+        return 7;
     }
     
     return 2;
@@ -212,73 +218,37 @@ getMaterialIndex(blockId, normal) {
     // GÉNÉRATION DU CHUNK
     // ==========================================
 
-    generate() {
+ generate() {
+    for (let x = 0; x < Chunk.SIZE; x++) {
+        for (let z = 0; z < Chunk.SIZE; z++) {
 
-        for (
-            let x = 0;
-            x < Chunk.SIZE;
-            x++
-        ) {
+            const worldX = this.chunkX * Chunk.SIZE + x;
+            const worldZ = this.chunkZ * Chunk.SIZE + z;
 
-            for (
-                let z = 0;
-                z < Chunk.SIZE;
-                z++
-            ) {
+            for (let y = 0; y < Chunk.HEIGHT; y++) {
 
+                const terrainBlock = this.world.generator.getBlock(
+                    worldX,
+                    y,
+                    worldZ
+                );
 
-                // ======================================
-                // POSITION MONDIALE
-                // ======================================
+                let blockId = terrainBlock;
 
-                const worldX =
-                    this.chunkX *
-                    Chunk.SIZE +
-                    x;
-
-
-                const worldZ =
-                    this.chunkZ *
-                    Chunk.SIZE +
-                    z;
-
-
-
-                // ======================================
-                // GÉNÉRER LA COLONNE
-                // ======================================
-
-                for (
-                    let y = 0;
-                    y < Chunk.HEIGHT;
-                    y++
-                ) {
-
-
-                    const blockId =
-                        this.world
-                            .generator
-                            .getBlock(
-                                worldX,
-                                y,
-                                worldZ
-                            );
-
-
-                    this.setBlock(
-                        x,
+                // Générer les arbres uniquement dans l'air
+                if (terrainBlock === BLOCK.AIR.id) {
+                    blockId = this.treeGenerator.getBlock(
+                        worldX,
                         y,
-                        z,
-                        blockId
+                        worldZ
                     );
-
                 }
 
+                this.setBlock(x, y, z, blockId);
             }
-
         }
-
     }
+}
 
 
 
@@ -646,8 +616,8 @@ getMaterialIndex(blockId, normal) {
                         // ==============================
 
                         if (
-                            neighbor !==
-                            BLOCK.AIR.id
+                            neighbor !== BLOCK.AIR.id &&
+                            neighbor !== BLOCK.OAK_LEAVES.id
                         ) {
 
                             continue;

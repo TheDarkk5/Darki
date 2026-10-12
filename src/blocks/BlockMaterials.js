@@ -1,124 +1,89 @@
+
 import * as THREE from "three";
 
 const loader = new THREE.TextureLoader();
 
 function loadTexture(path) {
-
     const texture = loader.load(path);
 
-    // Aspect pixelisé façon Minecraft
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
-
-    // Nos PNG contiennent des couleurs
     texture.colorSpace = THREE.SRGBColorSpace;
 
     return texture;
 }
 
-
 // ================================
 // TEXTURES
 // ================================
 
-const grassTop = loadTexture(
-    "/textures/grass_top.png"
-);
+const grassTop = loadTexture("/textures/grass_top.png");
+const grassSide = loadTexture("/textures/grass_side.png");
+const dirt = loadTexture("/textures/dirt.png");
+const stone = loadTexture("/textures/stone.png");
 
-const grassSide = loadTexture(
-    "/textures/grass_side.png"
-);
+const oakTop = loadTexture("/textures/oak_log_top.png");
+const oakSide = loadTexture("/textures/oak_log.png");
+const oakPlanks = loadTexture("/textures/oak_planks.png");
 
-const dirt = loadTexture(
-    "/textures/dirt.png"
-);
+// Feuilles avec pixels transparents
+const oakLeaves = loadTexture("/textures/oak_leaves.png");
 
-const stone = loadTexture(
-    "/textures/stone.png"
-);
-
-const oakTop = loadTexture(
-    "/textures/oak_log_top.png"
-);
-
-const oakSide = loadTexture(
-    "/textures/oak_log.png"
-);
-const oakplanks = loadTexture(
-    "/textures/oak_planks.png"
-);
 // ================================
-// MATERIALS
+// MATÉRIAUX
 // ================================
 
-const grassTopMaterial =
-    new THREE.MeshLambertMaterial({
-        map: grassTop
+function createMaterial(texture) {
+    return new THREE.MeshLambertMaterial({
+        map: texture
     });
+}
 
-const grassSideMaterial =
-    new THREE.MeshLambertMaterial({
-        map: grassSide
-    });
+const grassTopMaterial = createMaterial(grassTop);
+const grassSideMaterial = createMaterial(grassSide);
+const dirtMaterial = createMaterial(dirt);
+const stoneMaterial = createMaterial(stone);
 
-const dirtMaterial =
-    new THREE.MeshLambertMaterial({
-        map: dirt
-    });
+const oakTopMaterial = createMaterial(oakTop);
+const oakSideMaterial = createMaterial(oakSide);
+const oakPlanksMaterial = createMaterial(oakPlanks);
 
-const stoneMaterial =
-    new THREE.MeshLambertMaterial({
-        map: stone
-    });
+// Feuilles : transparence découpée
+const oakLeavesMaterial = new THREE.MeshLambertMaterial({
+    map: oakLeaves,
+    alphaTest: 0.5,
+    side: THREE.DoubleSide,
+    depthWrite: true
+});
 
-const oakTopMaterial =
-    new THREE.MeshLambertMaterial({
-        map: oakTop
-    });
-
-const oakSideMaterial =
-    new THREE.MeshLambertMaterial({
-        map: oakSide
-    });
-    const oakplanksMaterial =
-    new THREE.MeshLambertMaterial({
-        map: oakplanks
-    });
 // ================================
 // BLOCS
 // ================================
 
 export const BLOCK_MATERIALS = {
     GRASS: [
-        // droite
         grassSideMaterial,
-        // gauche
         grassSideMaterial,
-        // dessus
         grassTopMaterial,
-        // dessous
         dirtMaterial,
-        // devant
         grassSideMaterial,
-        // derrière
         grassSideMaterial
     ],
-    DIRT: dirtMaterial,
-    STONE: stoneMaterial,
-    OAK_LOG: [
-            // droite
-            oakSideMaterial,
-            // gauche
-            oakSideMaterial,
-            // dessus
-            oakTopMaterial,
-            // dessous
-            oakTopMaterial,
-            // devant
-            oakSideMaterial,
-            // derrière
-            oakSideMaterial
-        ],
-    OAK_PLANKS: oakplanksMaterial,
 
+    DIRT: dirtMaterial,
+
+    STONE: stoneMaterial,
+
+    OAK_LOG: [
+        oakSideMaterial,
+        oakSideMaterial,
+        oakTopMaterial,
+        oakTopMaterial,
+        oakSideMaterial,
+        oakSideMaterial
+    ],
+
+    OAK_PLANKS: oakPlanksMaterial,
+
+    OAK_LEAVES: oakLeavesMaterial
 };

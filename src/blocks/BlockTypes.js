@@ -40,4 +40,12 @@ export const BLOCK = {
         material: "OAK_PLANKS",
         solid: true
     },
+
+    OAK_LEAVES: {
+    id: 6,
+    name: "Feuilles de chêne",
+    material: "OAK_LEAVES",
+    solid: true,
+    transparent: true
+},
 };

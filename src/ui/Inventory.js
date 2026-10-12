@@ -27,7 +27,8 @@ export class Inventory {
             [BLOCK.DIRT.id]: "/textures/dirt.png",
             [BLOCK.STONE.id]: "/textures/stone.png",
             [BLOCK.OAK_LOG.id]: "/textures/oak_log.png",
-            [BLOCK.OAK_PLANKS.id]: "/textures/oak_planks.png"
+            [BLOCK.OAK_PLANKS.id]: "/textures/oak_planks.png",
+            [BLOCK.OAK_LEAVES.id]: "/textures/oak_leaves.png"
         };
 
         this.cursorElement = document.createElement("div");
