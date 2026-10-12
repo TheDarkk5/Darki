@@ -8,6 +8,7 @@ import {Hotbar} from "./ui/Hotbar.js";
 import {Inventory} from "./ui/Inventory.js";
 import { InventoryStorage } from "./systems/InventoryStorage.js";
 import { BLOCK } from "./blocks/BlockTypes.js";
+import { PlayerHand } from "./player/PlayerHand.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -163,13 +164,17 @@ const blockInteraction = new BlockInteraction(
         scene,
         player,
         hotbar,
-        inventory
+        inventory,
+        hand
 );
 
 // inventory.addItem(BLOCK.OAK_LOG.id, 5);
 
 const clock = new THREE.Clock();
+const hand = new PlayerHand(camera);
 
+// Nécessaire pour afficher les objets attachés à la caméra
+scene.add(camera);
 // ==========================================
 // MENU PRINCIPAL
 // ==========================================
@@ -325,6 +330,7 @@ if (gameStarted && !inventory.isOpen) {
 
     if (player.controls.isLocked) {
         player.update(deltaTime);
+        hand.update(deltaTime);
         blockInteraction.update();
     }
 }

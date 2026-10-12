@@ -11,7 +11,8 @@ export class BlockInteraction {
         scene,
         player,
         hotbar,
-        inventory
+        inventory,
+        hand
     ) {
 
         this.camera = camera;
@@ -21,6 +22,7 @@ export class BlockInteraction {
 
         this.hotbar = hotbar;
         this.inventory = inventory;
+        this.hand = hand;
 
         this.maxDistance = 5;
 
@@ -327,6 +329,7 @@ breakBlock() {
     this.inventory.updateUI();
     this.hotbar.updateUI();
     this.clearTarget();
+    this.hand.swing();
 }
 
     // ==========================================
@@ -361,6 +364,7 @@ placeBlock() {
     this.inventory.updateUI();
     this.hotbar.updateUI();
     this.clearTarget();
+    this.hand.swing();
 }
 
 
