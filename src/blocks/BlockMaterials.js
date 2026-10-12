@@ -40,6 +40,7 @@ function createMaterial(texture) {
 }
 
 const grassTopMaterial = createMaterial(grassTop);
+grassTopMaterial.color.setHex(0x91bd59);
 const grassSideMaterial = createMaterial(grassSide);
 const dirtMaterial = createMaterial(dirt);
 const stoneMaterial = createMaterial(stone);
