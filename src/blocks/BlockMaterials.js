@@ -51,6 +51,7 @@ const oakPlanksMaterial = createMaterial(oakPlanks);
 // Feuilles : transparence découpée
 const oakLeavesMaterial = new THREE.MeshLambertMaterial({
     map: oakLeaves,
+    color: 0x73b644,
     alphaTest: 0.5,
     side: THREE.DoubleSide,
     depthWrite: true
