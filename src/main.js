@@ -157,6 +157,7 @@ storage.addItem(BLOCK.STONE.id, 16);
 hotbar.updateUI();
 inventory.updateUI();
 
+const hand = new PlayerHand(camera);
 
 const blockInteraction = new BlockInteraction(
         camera,
@@ -171,7 +172,6 @@ const blockInteraction = new BlockInteraction(
 // inventory.addItem(BLOCK.OAK_LOG.id, 5);
 
 const clock = new THREE.Clock();
-const hand = new PlayerHand(camera);
 
 // Nécessaire pour afficher les objets attachés à la caméra
 scene.add(camera);
