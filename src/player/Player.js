@@ -23,7 +23,7 @@ export class Player {
         // =========================
 
         this.height = 2;
-        this.radius = 1;
+        this.radius = 0.5;
 
 
         // =========================
