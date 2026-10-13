@@ -46,10 +46,30 @@ this.generator = new WorldGenerator(this.seed);
     // GENERATION DU MONDE
     // ==========================================
 
+
 generateWorld() {
-    // Préparer les chunks autour du point de départ
-    this.loadChunksAroundPlayer(0, 0);
+    // Chunk de départ de la caméra : (20, 20)
+    const spawnChunkX = Math.floor(20 / Chunk.SIZE);
+    const spawnChunkZ = Math.floor(20 / Chunk.SIZE);
+
+    // Générer immédiatement le chunk de départ
+    this.createChunk(spawnChunkX, spawnChunkZ);
+
+    const spawnChunk = this.chunks.get(
+        this.getChunkKey(spawnChunkX, spawnChunkZ)
+    );
+
+    if (spawnChunk) {
+        spawnChunk.buildMesh();
+    }
+
+    // Les autres chunks seront générés progressivement
+    this.loadChunksAroundPlayer(
+        spawnChunkX,
+        spawnChunkZ
+    );
 }
+
 
 
     // ==========================================

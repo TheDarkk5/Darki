@@ -351,33 +351,30 @@ function updateFPS() {
 // GAME LOOP
 // ==========================================
 
+
 function animate() {
+    requestAnimationFrame(animate);
 
-    requestAnimationFrame(
-        animate
+    updateFPS();
+
+    const deltaTime = Math.min(
+        clock.getDelta(),
+        0.1
     );
-updateFPS();
 
-    const deltaTime =
-        Math.min(
-            clock.getDelta(),
-            0.1
-        );
-
-if (gameStarted && !inventory.isOpen) {
+    // Charger les chunks même depuis le menu principal
     world.update(camera.position);
 
-    if (player.controls.isLocked) {
-        player.update(deltaTime);
-        hand.update(deltaTime);
-        blockInteraction.update();
+    if (gameStarted && !inventory.isOpen) {
+        if (player.controls.isLocked) {
+            player.update(deltaTime);
+            hand.update(deltaTime);
+            blockInteraction.update();
+        }
     }
+
+    renderer.render(scene, camera);
 }
 
-    renderer.render(
-        scene,
-        camera
-    );
-
-}
 animate();
+
