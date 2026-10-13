@@ -1,45 +1,70 @@
+
 import { RECIPES } from "./CraftingRecipes.js";
 import { BLOCK } from "../blocks/BlockTypes.js";
 
 export class CraftingSystem {
-    constructor() {
-        this.grid = Array(4).fill(null);
+    constructor(size = 2) {
+        this.size = size;
+        this.grid = Array(size * size).fill(null);
     }
 
     setSlot(index, blockId) {
-        if (index < 0 || index >= 4) return;
+        if (index < 0 || index >= this.grid.length) return;
 
         this.grid[index] = blockId;
     }
 
+    getBlockName(blockId) {
+        if (blockId == null) return null;
+
+        return Object.keys(BLOCK).find(
+            key => BLOCK[key].id === blockId
+        ) || null;
+    }
+
     getRecipe(grid = this.grid) {
-        const ingredients = {};
+        const size = Math.sqrt(grid.length);
 
-        for (const blockId of grid) {
-            if (blockId == null) continue;
+        if (!Number.isInteger(size)) return null;
 
-            const blockName = Object.keys(BLOCK).find(
-                key => BLOCK[key].id === blockId
-            );
+        const names = grid.map(id => this.getBlockName(id));
 
-            if (!blockName) return null;
+        for (const recipe of RECIPES) {
+            const pattern = recipe.pattern;
 
-            ingredients[blockName] =
-                (ingredients[blockName] || 0) + 1;
+            const height = pattern.length;
+            const width = pattern[0].length;
+
+            if (height > size || width > size) continue;
+
+            for (let offsetY = 0; offsetY <= size - height; offsetY++) {
+                for (let offsetX = 0; offsetX <= size - width; offsetX++) {
+                    let valid = true;
+
+                    for (let y = 0; y < size && valid; y++) {
+                        for (let x = 0; x < size; x++) {
+                            const px = x - offsetX;
+                            const py = y - offsetY;
+
+                            const expected =
+                                py >= 0 && py < height &&
+                                px >= 0 && px < width
+                                    ? pattern[py][px]
+                                    : null;
+
+                            if (names[y * size + x] !== expected) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (valid) return recipe;
+                }
+            }
         }
 
-        return RECIPES.find(recipe => {
-            const required = recipe.ingredients;
-
-            return (
-                Object.keys(ingredients).length ===
-                Object.keys(required).length &&
-                Object.entries(required).every(
-                    ([name, count]) =>
-                        ingredients[name] === count
-                )
-            );
-        }) || null;
+        return null;
     }
 
     getResult(grid = this.grid) {
@@ -47,13 +72,12 @@ export class CraftingSystem {
 
         if (!recipe) return null;
 
-        const block = BLOCK[recipe.result.item];
+        const item = BLOCK[recipe.result.item];
 
-        // L'objet doit exister dans BlockTypes.js
-        if (!block) return null;
+        if (!item) return null;
 
         return {
-            blockId: block.id,
+            blockId: item.id,
             count: recipe.result.count
         };
     }
