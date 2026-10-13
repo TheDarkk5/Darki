@@ -6,13 +6,14 @@ from "alea";
 
 import { BLOCK }
 from "../blocks/BlockTypes.js";
-
+import { BiomeGenerator, BIOME } from "./BiomeGenerator.js";
 
 export class WorldGenerator {
 
     constructor(seed = "minecraft-threejs") {
 
         this.seed = seed;
+        this.biomes = new BiomeGenerator(12345);
 
         const random =
             alea(seed);
@@ -98,37 +99,27 @@ getHeight(worldX, worldZ) {
 
         // Au-dessus du terrain
 
-        if (y > height) {
-
-            return BLOCK.AIR.id;
-
-        }
-
+if (y > height) return BLOCK.AIR.id;
 
         // Surface
 
-        if (y === height) {
+ if (y === height) {
+    if (biome === BIOME.DESERT) return BLOCK.SAND.id;
+    if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
+    if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
 
-            return BLOCK.GRASS.id;
-
-        }
-
+    return BLOCK.GRASS.id;
+}
 
         // Terre
+        
+if (y >= height - 3) {
+    return biome === BIOME.DESERT
+        ? BLOCK.SAND.id
+        : BLOCK.DIRT.id;
+}
 
-        if (
-            y >=
-            height - 3
-        ) {
-
-            return BLOCK.DIRT.id;
-
-        }
-
-
-        // Tout le reste
-
-        return BLOCK.STONE.id;
+return BLOCK.STONE.id;
 
     }
 

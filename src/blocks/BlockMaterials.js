@@ -29,6 +29,9 @@ const oakPlanks = loadTexture("/textures/oak_planks.png");
 // Feuilles avec pixels transparents
 const oakLeaves = loadTexture("/textures/oak_leaves.png");
 
+const sand = loadTexture("/textures/sand.png");
+const snow = loadTexture("/textures/snow.png");
+
 // ================================
 // MATÉRIAUX
 // ================================
@@ -58,6 +61,13 @@ const oakLeavesMaterial = new THREE.MeshLambertMaterial({
     depthWrite: true
 });
 
+const sandMaterial = new THREE.MeshLambertMaterial({
+    map: sand
+});
+
+const snowMaterial = new THREE.MeshLambertMaterial({
+    map: snow
+});
 // ================================
 // BLOCS
 // ================================
@@ -87,5 +97,8 @@ export const BLOCK_MATERIALS = {
 
     OAK_PLANKS: oakPlanksMaterial,
 
-    OAK_LEAVES: oakLeavesMaterial
+    OAK_LEAVES: oakLeavesMaterial,
+
+    SAND: sandMaterial,
+    SNOW: snowMaterial 
 };

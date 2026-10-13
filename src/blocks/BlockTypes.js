@@ -48,4 +48,18 @@ export const BLOCK = {
     solid: true,
     transparent: true
 },
+
+SAND: {
+    id: 7,
+    name: "Sable",
+    material: "SAND",
+    solid: true
+},
+
+SNOW: {
+    id: 8,
+    name: "Neige",
+    material: "SNOW",
+    solid: true
+}
 };
