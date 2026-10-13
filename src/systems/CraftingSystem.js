@@ -1,7 +1,7 @@
 
 import { RECIPES } from "./CraftingRecipes.js";
 import { BLOCK } from "../blocks/BlockTypes.js";
-
+import { ITEM } from "../items/ItemTypes.js";
 export class CraftingSystem {
     constructor(size = 2) {
         this.size = size;
@@ -14,13 +14,19 @@ export class CraftingSystem {
         this.grid[index] = blockId;
     }
 
-    getBlockName(blockId) {
-        if (blockId == null) return null;
+getBlockName(id) {
+    if (id == null) return null;
 
-        return Object.keys(BLOCK).find(
-            key => BLOCK[key].id === blockId
-        ) || null;
-    }
+    const blockName = Object.keys(BLOCK).find(
+        key => BLOCK[key].id === id
+    );
+
+    if (blockName) return blockName;
+
+    return Object.keys(ITEM).find(
+        key => ITEM[key].id === id
+    ) || null;
+}
 
     getRecipe(grid = this.grid) {
         const size = Math.sqrt(grid.length);
@@ -67,20 +73,25 @@ export class CraftingSystem {
         return null;
     }
 
-    getResult(grid = this.grid) {
-        const recipe = this.getRecipe(grid);
+getResult(grid = this.grid) {
+    const recipe = this.getRecipe(grid);
 
-        if (!recipe) return null;
+    if (!recipe) return null;
 
-        const item = BLOCK[recipe.result.item];
+    const name = recipe.result.item;
 
-        if (!item) return null;
+    const result = BLOCK[name] || ITEM[name];
 
-        return {
-            blockId: item.id,
-            count: recipe.result.count
-        };
+    if (!result) {
+        console.warn(`Objet de craft introuvable : ${name}`);
+        return null;
     }
+
+    return {
+        blockId: result.id,
+        count: recipe.result.count
+    };
+}
 
     craft(grid = this.grid) {
         const result = this.getResult(grid);
