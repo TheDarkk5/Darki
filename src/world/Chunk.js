@@ -632,6 +632,23 @@ getMaterialIndex(blockId, normal) {
 
 
 
+
+
+
+
+                        // ==============================
+                        // MATERIAL DE LA FACE
+                        // ==============================
+
+                        const materialIndex =
+                            this.getMaterialIndex(
+                                block,
+                                face.normal
+                            );
+
+                            const buffer = materialBuffers[materialIndex];
+                            const vertexIndex = buffer.positions.length / 3;
+
                         // ==============================
                         // SOMMETS
                         // ==============================
@@ -663,23 +680,6 @@ buffer.uvs.push(
     1, 1,
     1, 0
 );
-
-
-
-                        // ==============================
-                        // MATERIAL DE LA FACE
-                        // ==============================
-
-                        const materialIndex =
-                            this.getMaterialIndex(
-                                block,
-                                face.normal
-                            );
-
-                            const buffer = materialBuffers[materialIndex];
-                            const vertexIndex = buffer.positions.length / 3;
-
-
                         // ==============================
                         // DEUX TRIANGLES
                         // ==============================
