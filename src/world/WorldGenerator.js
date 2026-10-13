@@ -10,10 +10,9 @@ import { BiomeGenerator, BIOME } from "./BiomeGenerator.js";
 
 export class WorldGenerator {
 
-    constructor(seed = "minecraft-threejs") {
-
-        this.seed = seed;
-        this.biomes = new BiomeGenerator(12345);
+constructor(seed) {
+    this.seed = seed;
+    this.biomes = new BiomeGenerator(seed);
 
         const random =
             alea(seed);

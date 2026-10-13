@@ -17,14 +17,10 @@ this.unloadDistance = this.renderDistance + 2;
 this.lastPlayerChunkX = null;
 this.lastPlayerChunkZ = null;
 
-this.seed =
-    "mon-premier-monde";
+this.seed = Math.floor(Math.random() * 2147483647);
+console.log("🌍 Seed du monde :", this.seed);
 
-
-this.generator =
-    new WorldGenerator(
-        this.seed
-    );
+this.generator = new WorldGenerator(this.seed);
     
         this.generateWorld();
 

@@ -4,7 +4,7 @@ import { BLOCK } from "../blocks/BlockTypes.js";
 export class TreeGenerator {
     constructor(worldGenerator) {
         this.generator = worldGenerator;
-        this.seed = 12345;
+        this.seed = worldGenerator.seed;
         this.spacing = 7;
     }
 
