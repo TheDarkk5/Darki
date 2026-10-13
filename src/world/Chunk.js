@@ -300,19 +300,12 @@ getMaterialIndex(blockId, normal) {
         // BUFFER DATA
         // ======================================
 
-        const positions = [];
-
-        const normals = [];
-
-        const uvs = [];
-
-        const indices = [];
-
-        const groups = [];
-
-
-        let vertexIndex = 0;
-
+ const materialBuffers = CHUNK_MATERIALS.map(() => ({
+    positions: [],
+    normals: [],
+    uvs: [],
+    indices: []
+}));
 
 
         // ======================================
@@ -648,23 +641,13 @@ getMaterialIndex(blockId, normal) {
                             of face.corners
                         ) {
 
-                            positions.push(
+                    buffer.positions.push(
+                        x + corner[0],
+                        y + corner[1],
+                        z + corner[2]
+                    );
 
-                                x +
-                                corner[0],
-
-                                y +
-                                corner[1],
-
-                                z +
-                                corner[2]
-
-                            );
-
-
-                            normals.push(
-                                ...face.normal
-                            );
+                    buffer.normals.push(...face.normal);
 
                         }
 
@@ -674,17 +657,12 @@ getMaterialIndex(blockId, normal) {
                         // UV
                         // ==============================
 
-                        uvs.push(
-
-                            0, 0,
-
-                            0, 1,
-
-                            1, 1,
-
-                            1, 0
-
-                        );
+buffer.uvs.push(
+    0, 0,
+    0, 1,
+    1, 1,
+    1, 0
+);
 
 
 
@@ -698,52 +676,22 @@ getMaterialIndex(blockId, normal) {
                                 face.normal
                             );
 
-
-
-                        // ==============================
-                        // GROUPE THREE.JS
-                        // ==============================
-
-                        groups.push({
-
-                            start:
-                                indices.length,
-
-                            count:
-                                6,
-
-                            materialIndex:
-                                materialIndex
-
-                        });
-
+                            const buffer = materialBuffers[materialIndex];
+                            const vertexIndex = buffer.positions.length / 3;
 
 
                         // ==============================
                         // DEUX TRIANGLES
                         // ==============================
 
-                        indices.push(
-
-                            vertexIndex,
-
-                            vertexIndex + 1,
-
-                            vertexIndex + 2,
-
-
-                            vertexIndex,
-
-                            vertexIndex + 2,
-
-                            vertexIndex + 3
-
-                        );
-
-
-
-                        vertexIndex += 4;
-
+buffer.indices.push(
+    vertexIndex,
+    vertexIndex + 1,
+    vertexIndex + 2,
+    vertexIndex,
+    vertexIndex + 2,
+    vertexIndex + 3
+);
                     }
 
                 }
@@ -758,97 +706,62 @@ getMaterialIndex(blockId, normal) {
         // CRÉATION BUFFER GEOMETRY
         // ======================================
 
-        const geometry =
-            new THREE.BufferGeometry();
+const geometry = new THREE.BufferGeometry();
 
+// Tableaux finaux
+const positions = [];
+const normals = [];
+const uvs = [];
+const indices = [];
 
+let vertexOffset = 0;
 
-        // ======================================
-        // POSITIONS
-        // ======================================
+// Fusionner les faces par matériau
+materialBuffers.forEach((buffer, materialIndex) => {
+    if (buffer.indices.length === 0) {
+        return;
+    }
 
-        geometry.setAttribute(
+    // Début du groupe dans le tableau des indices
+    const start = indices.length;
 
-            "position",
+    // Ajouter les sommets
+    positions.push(...buffer.positions);
+    normals.push(...buffer.normals);
+    uvs.push(...buffer.uvs);
 
-            new THREE.Float32BufferAttribute(
-                positions,
-                3
-            )
+    // Décaler les indices pour les nouveaux sommets
+    for (const index of buffer.indices) {
+        indices.push(index + vertexOffset);
+    }
 
-        );
+    // Un seul groupe par matériau
+    geometry.addGroup(
+        start,
+        buffer.indices.length,
+        materialIndex
+    );
 
+    vertexOffset += buffer.positions.length / 3;
+});
 
+// Attributs de la géométrie
+geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3)
+);
 
-        // ======================================
-        // NORMALES
-        // ======================================
+geometry.setAttribute(
+    "normal",
+    new THREE.Float32BufferAttribute(normals, 3)
+);
 
-        geometry.setAttribute(
+geometry.setAttribute(
+    "uv",
+    new THREE.Float32BufferAttribute(uvs, 2)
+);
 
-            "normal",
-
-            new THREE.Float32BufferAttribute(
-                normals,
-                3
-            )
-
-        );
-
-
-
-        // ======================================
-        // UV
-        // ======================================
-
-        geometry.setAttribute(
-
-            "uv",
-
-            new THREE.Float32BufferAttribute(
-                uvs,
-                2
-            )
-
-        );
-
-
-
-        // ======================================
-        // INDICES
-        // ======================================
-
-        geometry.setIndex(
-            indices
-        );
-
-
-
-        // ======================================
-        // GROUPES DE MATERIALS
-        // ======================================
-
-        geometry.clearGroups();
-
-
-        for (
-            const group
-            of groups
-        ) {
-
-            geometry.addGroup(
-
-                group.start,
-
-                group.count,
-
-                group.materialIndex
-
-            );
-
-        }
-
-
+geometry.setIndex(indices);
 
         // ======================================
         // BOUNDING SPHERE
