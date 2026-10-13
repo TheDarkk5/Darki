@@ -1,4 +1,5 @@
-import { BLOCK } from "../blocks/BlockTypes.js";
+
+import { getInventoryItem } from "../items/ItemRegistry.js";
 
 export class Hotbar {
     constructor() {
@@ -10,17 +11,25 @@ export class Hotbar {
 
         window.addEventListener("keydown", event => {
             if (/^Digit[1-9]$/.test(event.code)) {
-                this.selectSlot(Number(event.code.slice(-1)) - 1);
+                this.selectSlot(
+                    Number(event.code.slice(-1)) - 1
+                );
             }
         });
 
         window.addEventListener("wheel", event => {
-            if (document.getElementById("inventory")?.style.display === "flex") {
+            if (
+                document.getElementById("inventory")?.style.display === "flex"
+            ) {
                 return;
             }
 
             this.selectSlot(
-                (this.selectedSlot + (event.deltaY > 0 ? 1 : -1) + 9) % 9
+                (
+                    this.selectedSlot +
+                    (event.deltaY > 0 ? 1 : -1) +
+                    9
+                ) % 9
             );
         });
     }
@@ -33,18 +42,74 @@ export class Hotbar {
     }
 
     getSelectedBlock() {
-        return this.storage?.slots[this.selectedSlot]?.blockId ?? null;
+        const slot = this.storage?.slots[this.selectedSlot];
+        if (!slot) return null;
+
+        const item = getInventoryItem(slot.blockId);
+
+        // Un item ne peut pas être placé comme un bloc
+        if (!item || item.type !== "block") {
+            return null;
+        }
+
+        return slot.blockId;
+    }
+
+    getSelectedItem() {
+        const slot = this.storage?.slots[this.selectedSlot];
+
+        if (!slot) return null;
+
+        return getInventoryItem(slot.blockId);
     }
 
     updateUI() {
         this.elements.forEach((element, index) => {
-            element.classList.toggle("selected", index === this.selectedSlot);
+            element.classList.toggle(
+                "selected",
+                index === this.selectedSlot
+            );
+
+            const slot = this.storage?.slots[index];
+            const item = slot
+                ? getInventoryItem(slot.blockId)
+                : null;
+
+            element.replaceChildren();
+
+            if (!item) return;
+
+            if (item.texture) {
+                const image = document.createElement("img");
+                image.src = item.texture;
+                image.className = "hotbar-item-icon";
+                image.alt = item.name;
+
+                element.appendChild(image);
+            } else {
+                const label = document.createElement("span");
+                label.className = "hotbar-item-label";
+                label.textContent = item.name;
+
+                element.appendChild(label);
+            }
+
+            if (slot.count > 1) {
+                const count = document.createElement("span");
+                count.className = "hotbar-item-count";
+                count.textContent = slot.count;
+
+                element.appendChild(count);
+            }
         });
 
-        const item = this.storage?.slots[this.selectedSlot];
+        const slot = this.storage?.slots[this.selectedSlot];
+        const item = slot
+            ? getInventoryItem(slot.blockId)
+            : null;
 
-        this.blockName.textContent = item
-            ? Object.values(BLOCK).find(block => block.id === item.blockId)?.name ?? `Bloc ${item.blockId}`
-            : "";
+        if (this.blockName) {
+            this.blockName.textContent = item?.name ?? "";
+        }
     }
 }

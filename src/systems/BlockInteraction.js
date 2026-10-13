@@ -1,6 +1,8 @@
 import * as THREE from "three";
 
 import { BLOCK } from "../blocks/BlockTypes.js";
+import { getBlockDrop } from "../items/BlockDrops.js";
+import { getInventoryItem } from "../items/ItemRegistry.js";
 
 
 export class BlockInteraction {
@@ -319,12 +321,20 @@ breakBlock() {
         return;
     }
 
-    // Ne pas casser si l'inventaire est plein
-    if (this.inventory.storage.addItem(blockId, 1) > 0) {
+    const dropId = getBlockDrop(blockId);
+    const storage = this.inventory.storage;
+    const previousSlots = storage.slots.map(slot => slot ? { ...slot } : null);
+
+    // Ne pas casser si l'inventaire ne peut pas recevoir le drop.
+    if (storage.addItem(dropId, 1) > 0) {
         return;
     }
 
-    this.world.removeBlock(x, y, z);
+    if (!this.world.removeBlock(x, y, z)) {
+        // Annuler le gain si le monde refuse la destruction.
+        storage.slots.splice(0, storage.slots.length, ...previousSlots);
+        return;
+    }
 
     this.inventory.updateUI();
     this.hotbar.updateUI();
@@ -348,24 +358,48 @@ placeBlock() {
     const slotIndex = this.hotbar.selectedSlot;
     const item = this.inventory.storage.slots[slotIndex];
 
-    if (!item || item.count <= 0) return;
+    if (!item || item.count < 1) return;
+
+    const definition = getInventoryItem(item.blockId);
+    if (!definition || definition.type !== "block") return;
 
     if (this.world.getBlock(x, y, z) !== BLOCK.AIR.id) {
         return;
     }
 
-    // Consommer l'objet sélectionné
-    if (!this.inventory.storage.removeFromSlot(slotIndex, 1)) {
+    if (this.intersectsPlayer(x, y, z)) {
         return;
     }
 
-    this.world.addBlock(x, y, z, item.blockId);
+    // Consommer uniquement après une pose réussie.
+    if (!this.world.addBlock(x, y, z, definition.id)) {
+        return;
+    }
+
+    if (!this.inventory.storage.removeFromSlot(slotIndex, 1)) {
+        this.world.removeBlock(x, y, z);
+        return;
+    }
 
     this.inventory.updateUI();
     this.hotbar.updateUI();
     this.clearTarget();
     this.hand.swing();
 }
+
+    intersectsPlayer(x, y, z) {
+        // La caméra représente les yeux ; les pieds sont à y - height.
+        const position = this.camera.position;
+        const height = this.player.height ?? 2;
+        const radius = this.player.radius ?? 0.3;
+
+        // Un simple contact avec une face est autorisé, pas un chevauchement.
+        return (
+            x < position.x + radius && x + 1 > position.x - radius &&
+            y < position.y && y + 1 > position.y - height &&
+            z < position.z + radius && z + 1 > position.z - radius
+        );
+    }
 
 
 

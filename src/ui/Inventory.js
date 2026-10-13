@@ -1,4 +1,5 @@
 import { BLOCK } from "../blocks/BlockTypes.js";
+import { getInventoryItem } from "../items/ItemRegistry.js";
 import { CraftingSystem } from "../systems/CraftingSystem.js";
 
 export class Inventory {
@@ -15,8 +16,7 @@ export class Inventory {
 
         this.element = document.getElementById("inventory");
         this.slots = document.querySelectorAll(".inventory-slot");
-        this.inventoryHotbar = document.querySelectorAll(".inventory-hotbar-slot"
-);
+        this.inventoryHotbar = document.querySelectorAll(".inventory-hotbar-slot");
         this.craftSlots = document.querySelectorAll(
             ".craft-slot[data-craft]"
         );
@@ -28,7 +28,14 @@ export class Inventory {
             [BLOCK.STONE.id]: "/textures/stone.png",
             [BLOCK.OAK_LOG.id]: "/textures/oak_log.png",
             [BLOCK.OAK_PLANKS.id]: "/textures/oak_planks.png",
-            [BLOCK.OAK_LEAVES.id]: "/textures/oak_leaves.png"
+            [BLOCK.OAK_LEAVES.id]: "/textures/oak_leaves.png",
+            [BLOCK.SAND.id]: "/textures/sand.png",
+            [BLOCK.SNOW.id]: "/textures/snow.png",
+            [BLOCK.COAL_ORE.id]: "/textures/coal_ore.png",
+            [BLOCK.IRON_ORE.id]: "/textures/iron_ore.png",
+            [BLOCK.COPPER_ORE.id]: "/textures/copper_ore.png",
+            [BLOCK.GOLD_ORE.id]: "/textures/gold_ore.png",
+            [BLOCK.DIAMOND_ORE.id]: "/textures/diamond_ore.png"
         };
 
         this.cursorElement = document.createElement("div");
@@ -83,10 +90,10 @@ export class Inventory {
 
             this.cursorItem = null;
         }
-if (!this.returnCraftItems()) {
-    this.updateUI();
-    return;
-}
+        if (!this.returnCraftItems()) {
+            this.updateUI();
+            return;
+        }
         this.isOpen = false;
         this.element.style.display = "none";
         this.player.controls.lock();
@@ -94,44 +101,29 @@ if (!this.returnCraftItems()) {
     }
 
     setupSlots() {
-        // Les 27 cases de l'inventaire correspondent aux indices 9 à 35
-        this.slots.forEach((element, index) => {
-            const storageIndex = index + 9;
-
+        const bindSlot = (element, index) => {
             element.addEventListener("mousedown", event => {
-                if (event.button !== 0 && event.button !== 2) return;
-
-                event.preventDefault();
-                this.handleSlot(storageIndex, event.button);
-            });
-        });
-
-        // Les 9 cases de la hotbar
-        this.hotbar.elements.forEach((element, index) => {
-            element.addEventListener("mousedown", event => {
-                if (!this.isOpen) return;
-                if (event.button !== 0 && event.button !== 2) return;
-
+                if (!this.isOpen || (event.button !== 0 && event.button !== 2)) return;
                 event.preventDefault();
                 this.handleSlot(index, event.button);
             });
+            element.addEventListener("contextmenu", event => event.preventDefault());
+        };
 
-        this.inventoryHotbar.forEach((element, index) => {
-    element.addEventListener("mousedown", event => {
-        if (event.button !== 0 && event.button !== 2) return;
+        // 27 emplacements principaux (9–35) et 9 emplacements de hotbar (0–8).
+        this.slots.forEach((element, index) => bindSlot(element, index + 9));
+        this.hotbar.elements.forEach((element, index) => bindSlot(element, index));
+        this.inventoryHotbar.forEach((element, index) => bindSlot(element, index));
+    }
 
-        event.preventDefault();
-        this.handleSlot(index, event.button);
-    });
-
-    element.addEventListener("contextmenu", event => {
-        event.preventDefault();
-    });
-});
-        });
+    getMaxStack(blockId) {
+        const maxStack = getInventoryItem(blockId)?.maxStack ?? 64;
+        return Number.isInteger(maxStack) && maxStack > 0 ? maxStack : 64;
     }
 
     handleSlot(index, button) {
+        if (!this.isOpen || (button !== 0 && button !== 2)) return;
+        if (!Number.isInteger(index) || index < 0 || index >= 36) return;
         const slot = this.storage.slots[index];
 
         if (button === 0) {
@@ -142,10 +134,15 @@ if (!this.returnCraftItems()) {
                 this.cursorItem = slot;
                 this.storage.slots[index] = null;
             } else if (!slot) {
-                this.storage.slots[index] = this.cursorItem;
-                this.cursorItem = null;
+                const moved = Math.min(
+                    this.getMaxStack(this.cursorItem.blockId),
+                    this.cursorItem.count
+                );
+                this.storage.slots[index] = { ...this.cursorItem, count: moved };
+                this.cursorItem.count -= moved;
+                if (this.cursorItem.count === 0) this.cursorItem = null;
             } else if (slot.blockId === this.cursorItem.blockId) {
-                const space = 64 - slot.count;
+                const space = Math.max(0, this.getMaxStack(slot.blockId) - slot.count);
                 const moved = Math.min(space, this.cursorItem.count);
 
                 slot.count += moved;
@@ -155,6 +152,7 @@ if (!this.returnCraftItems()) {
                     this.cursorItem = null;
                 }
             } else {
+                if (this.cursorItem.count > this.getMaxStack(this.cursorItem.blockId)) return;
                 this.storage.slots[index] = this.cursorItem;
                 this.cursorItem = slot;
             }
@@ -186,7 +184,7 @@ if (!this.returnCraftItems()) {
                 this.cursorItem.count--;
             } else if (
                 slot.blockId === this.cursorItem.blockId &&
-                slot.count < 64
+                slot.count < this.getMaxStack(slot.blockId)
             ) {
                 slot.count++;
                 this.cursorItem.count--;
@@ -202,8 +200,9 @@ if (!this.returnCraftItems()) {
 
     setupCrafting() {
         this.craftSlots.forEach((element, index) => {
+            element.addEventListener("contextmenu", event => event.preventDefault());
             element.addEventListener("mousedown", event => {
-                if (event.button !== 0 && event.button !== 2) return;
+                if (!this.isOpen || (event.button !== 0 && event.button !== 2)) return;
 
                 event.preventDefault();
 
@@ -218,7 +217,7 @@ if (!this.returnCraftItems()) {
                             blockId: current,
                             count: 1
                         };
-                    } else if (this.cursorItem.count < 64) {
+                    } else if (this.cursorItem.count < this.getMaxStack(current)) {
                         this.cursorItem.count++;
                     } else {
                         return;
@@ -238,17 +237,20 @@ if (!this.returnCraftItems()) {
             });
         });
 
+        this.resultSlot?.addEventListener("contextmenu", event => event.preventDefault());
         this.resultSlot?.addEventListener("mousedown", event => {
-            if (event.button !== 0) return;
+            if (!this.isOpen || event.button !== 0) return;
 
             event.preventDefault();
 
             const result = this.crafting.getResult(this.craftGrid);
-            if (!result) return;
+            if (!result || !Number.isInteger(result.count) || result.count <= 0) return;
+            const maxStack = this.getMaxStack(result.blockId);
+            if (result.count > maxStack) return;
 
             if (this.cursorItem) {
                 if (this.cursorItem.blockId !== result.blockId) return;
-                if (this.cursorItem.count + result.count > 64) return;
+                if (this.cursorItem.count + result.count > maxStack) return;
 
                 this.cursorItem.count += result.count;
             } else {
@@ -267,38 +269,50 @@ if (!this.returnCraftItems()) {
         });
     }
 
-renderItem(element, item) {
-    element.querySelectorAll(".item-icon, .item-count")
-        .forEach(child => child.remove());
+    renderItem(element, item) {
+        element.querySelectorAll(".item-icon, .item-count, .item-label")
+            .forEach(child => child.remove());
+        element.removeAttribute("title");
+        if (!item) return;
 
-    if (!item) return;
+        const definition = getInventoryItem(item.blockId);
+        const name = definition?.name ?? String(item.blockId);
+        const texture = definition?.texture ?? this.textures[item.blockId];
+        element.title = name;
 
-    const texture = this.textures[item.blockId];
+        const createLabel = () => {
+            const label = document.createElement("span");
+            label.className = "item-label";
+            label.textContent = name;
+            return label;
+        };
 
-    if (texture) {
-        const image = document.createElement("img");
-        image.src = texture;
-        image.className = "item-icon";
-        element.appendChild(image);
+        if (texture) {
+            const image = document.createElement("img");
+            image.className = "item-icon";
+            image.alt = name;
+            image.draggable = false;
+            image.addEventListener("error", () => {
+                if (image.parentNode === element) image.replaceWith(createLabel());
+            }, { once: true });
+            image.src = texture;
+            element.appendChild(image);
+        } else {
+            element.appendChild(createLabel());
+        }
+
+        if (item.count > 1) {
+            const count = document.createElement("span");
+            count.className = "item-count";
+            count.textContent = item.count;
+            element.appendChild(count);
+        }
     }
-
-    if (item.count > 1) {
-        const count = document.createElement("span");
-        count.className = "item-count";
-        count.textContent = item.count;
-        element.appendChild(count);
-    }
-}
 
     updateUI() {
         // Inventaire
         this.slots.forEach((element, index) => {
             this.renderItem(element, this.storage.slots[index + 9]);
-        });
-
-        // Hotbar
-        this.hotbar.elements.forEach((element, index) => {
-            this.renderItem(element, this.storage.slots[index]);
         });
 
         // Craft
@@ -325,25 +339,23 @@ renderItem(element, item) {
         this.cursorElement.style.display =
             this.isOpen && this.cursorItem ? "block" : "none";
 
+        // La hotbar du jeu possède son propre rendu : un seul appel.
         this.hotbar.updateUI();
 
         this.inventoryHotbar.forEach((element, index) => {
-    this.renderItem(element, this.storage.slots[index]);
-});
+            this.renderItem(element, this.storage.slots[index]);
+        });
     }
-   returnCraftItems() {
-    for (let i = 0; i < this.craftGrid.length; i++) {
-        const blockId = this.craftGrid[i];
 
-        if (blockId === null) continue;
+    returnCraftItems() {
+        for (let i = 0; i < this.craftGrid.length; i++) {
+            const blockId = this.craftGrid[i];
+            if (blockId === null) continue;
 
-        const remaining = this.storage.addItem(blockId, 1);
-
-        if (remaining === 0) {
-            this.craftGrid[i] = null;
+            const remaining = this.storage.addItem(blockId, 1);
+            if (remaining === 0) this.craftGrid[i] = null;
         }
-    }
 
-    return this.craftGrid.every(item => item === null);
-} 
+        return this.craftGrid.every(item => item === null);
+    }
 }

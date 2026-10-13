@@ -1,43 +1,53 @@
+import { getInventoryItem } from "../items/ItemRegistry.js";
+
 export class InventoryStorage {
     constructor() {
         this.slots = Array(36).fill(null);
         this.maxStack = 64;
     }
 
-    addItem(blockId, amount = 1) {
-        let remaining = amount;
-
-        // Remplir les piles existantes
-        for (const slot of this.slots) {
-            if (!slot || slot.blockId !== blockId) continue;
-
-            const space = this.maxStack - slot.count;
-            const added = Math.min(space, remaining);
-
-            slot.count += added;
-            remaining -= added;
-
-            if (remaining === 0) return 0;
-        }
-
-        // Utiliser les cases vides
-        for (let i = 0; i < this.slots.length; i++) {
-            if (this.slots[i] !== null) continue;
-
-            const added = Math.min(this.maxStack, remaining);
-
-            this.slots[i] = {
-                blockId,
-                count: added
-            };
-
-            remaining -= added;
-
-            if (remaining === 0) return 0;
-        }
-
-        return remaining;
+addItem(blockId, amount = 1) {
+    if (!Number.isInteger(amount) || amount <= 0) {
+        return amount;
     }
+
+    const item = getInventoryItem(blockId);
+    if (!item) return amount;
+
+    const maxStack = item.maxStack ?? 64;
+    let remaining = amount;
+
+    // Compléter les piles existantes
+    for (const slot of this.slots) {
+        if (!slot || slot.blockId !== blockId) continue;
+
+        const space = Math.max(0, maxStack - slot.count);
+        const added = Math.min(space, remaining);
+
+        slot.count += added;
+        remaining -= added;
+
+        if (remaining === 0) return 0;
+    }
+
+    // Remplir les emplacements vides
+    for (let i = 0; i < this.slots.length; i++) {
+        if (this.slots[i] !== null) continue;
+
+        const added = Math.min(maxStack, remaining);
+
+        this.slots[i] = {
+            blockId,
+            count: added
+        };
+
+        remaining -= added;
+
+        if (remaining === 0) return 0;
+    }
+
+    return remaining;
+}
 
     getItemCount(blockId) {
         return this.slots.reduce(
