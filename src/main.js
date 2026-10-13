@@ -314,6 +314,39 @@ const music = new MusicSystem();
 document.addEventListener("pointerdown", () => {
     music.start();
 }, { once: true });
+
+
+const fpsCounter = document.getElementById("fps-counter");
+
+let fpsFrames = 0;
+let fpsLastTime = performance.now();
+
+function updateFPS() {
+    fpsFrames++;
+
+    const now = performance.now();
+    const elapsed = now - fpsLastTime;
+
+    // Actualisation toutes les 500 ms
+    if (elapsed >= 500) {
+        const fps = Math.round((fpsFrames * 1000) / elapsed);
+
+        fpsCounter.textContent = `FPS : ${fps}`;
+
+        // Couleur selon les performances
+        if (fps >= 55) {
+            fpsCounter.style.color = "#55ff55";
+        } else if (fps >= 30) {
+            fpsCounter.style.color = "#ffff55";
+        } else {
+            fpsCounter.style.color = "#ff5555";
+        }
+
+        fpsFrames = 0;
+        fpsLastTime = now;
+    }
+}
+
 // ==========================================
 // GAME LOOP
 // ==========================================
@@ -323,7 +356,7 @@ function animate() {
     requestAnimationFrame(
         animate
     );
-
+updateFPS();
 
     const deltaTime =
         Math.min(
