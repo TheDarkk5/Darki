@@ -607,34 +607,55 @@ getMaterialIndex(blockId, normal) {
                         // BLOC VOISIN
                         // ==============================
 
-                        const neighbor =
-                            this.world
-                                .getBlock(
-                                    worldX + dx,
-                                    y + dy,
-                                    worldZ + dz
-                                );
 
+const neighborX = x + dx;
+const neighborY = y + dy;
+const neighborZ = z + dz;
 
+let neighbor;
 
-                        // ==============================
-                        // FACE CACHÉE
-                        // ==============================
+// Si le bloc voisin est dans le même chunk,
+// on évite une recherche dans World.js
+if (
+    neighborX >= 0 &&
+    neighborX < Chunk.SIZE &&
+    neighborY >= 0 &&
+    neighborY < Chunk.HEIGHT &&
+    neighborZ >= 0 &&
+    neighborZ < Chunk.SIZE
+) {
+    neighbor = this.getBlock(
+        neighborX,
+        neighborY,
+        neighborZ
+    );
+} else {
+    neighbor = this.world.getBlock(
+        worldX + dx,
+        neighborY,
+        worldZ + dz
+    );
+}
 
-                        if (
-                            neighbor !== BLOCK.AIR.id &&
-                            neighbor !== BLOCK.OAK_LEAVES.id
-                        ) {
+const isLeaves = block === BLOCK.OAK_LEAVES.id;
+const neighborIsLeaves = neighbor === BLOCK.OAK_LEAVES.id;
 
-                            continue;
-
-                        }
-
-
-
-
-
-
+// Air : la face est visible
+if (neighbor === BLOCK.AIR.id) {
+    // On conserve la face
+}
+// Feuilles contre feuilles : face inutile
+else if (isLeaves && neighborIsLeaves) {
+    continue;
+}
+// Bloc solide contre feuilles : face visible
+else if (!isLeaves && neighborIsLeaves) {
+    // On conserve la face
+}
+// Feuilles contre bloc solide : face cachée
+else {
+    continue;
+}
 
                         // ==============================
                         // MATERIAL DE LA FACE

@@ -57,13 +57,22 @@ const oakPlanksMaterial = createMaterial(oakPlanks);
 
 
 // Feuilles : transparence découpée
+
 const oakLeavesMaterial = new THREE.MeshLambertMaterial({
     map: oakLeaves,
     color: 0x73b644,
+
+    // Transparence découpée
+    transparent: false,
     alphaTest: 0.5,
-    side: THREE.DoubleSide,
+
+    // Afficher uniquement les faces avant
+    side: THREE.FrontSide,
+
+    // Écriture dans le buffer de profondeur
     depthWrite: true
 });
+
 
 const sandMaterial = new THREE.MeshLambertMaterial({
     map: sand
