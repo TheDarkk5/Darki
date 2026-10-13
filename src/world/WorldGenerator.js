@@ -66,15 +66,11 @@ getHeight(worldX, worldZ) {
         );
 
 
-    const height =
-        12 +
-
-        continental * 8 +
-
-        hills * 4 +
-
-        details * 1.5;
-
+   const height =
+    48 +
+    continental * 18 +
+    hills * 9 +
+    details * 2.5;
 
     return Math.floor(
         height
@@ -87,40 +83,45 @@ getHeight(worldX, worldZ) {
     // TYPE DE BLOC
     // ==========================================
 
-    getBlock(x, y, z) {
+getBlock(x, y, z) {
+    if (y < 0 || y >= 128) {
+        return BLOCK.AIR.id;
+    }
+
     const biome = this.biomes.getBiome(x, z);
     const height = this.getHeight(x, z);
-    const surfaceY = this.getHeight(x, z);
 
-        // Au-dessus du terrain
-
-if (y > height) return BLOCK.AIR.id;
-
-        // Surface
-
- if (y === height) {
-    if (biome === BIOME.DESERT) return BLOCK.SAND.id;
-    if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
-    if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
-
-    return BLOCK.GRASS.id;
-}
-
-// Générer des grottes uniquement sous la surface
-if (y < surfaceY - 4 && this.caves.isCave(x, y, z, surfaceY)) {
+    // Air au-dessus du terrain
+if (y > height) {
     return BLOCK.AIR.id;
 }
 
-        // Terre
+    // Surface du biome
+    if (y === height) {
+        if (biome === BIOME.DESERT) return BLOCK.SAND.id;
+        if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
+        if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
 
-if (y >= height - 3) {
-    return biome === BIOME.DESERT
-        ? BLOCK.SAND.id
-        : BLOCK.DIRT.id;
-}
-
-return this.ores.getBlock(x, y, z);
-
+        return BLOCK.GRASS.id;
     }
+
+    // Grottes souterraines
+    if (
+        y < height - 4 &&
+        this.caves.isCave(x, y, z, height)
+    ) {
+        return BLOCK.AIR.id;
+    }
+
+    // Couches proches de la surface
+    if (y >= height - 3) {
+        return biome === BIOME.DESERT
+            ? BLOCK.SAND.id
+            : BLOCK.DIRT.id;
+    }
+
+    // Pierre et minerais
+    return this.ores.getBlock(x, y, z);
+}
 
 }

@@ -5,11 +5,11 @@ export class OreGenerator {
     constructor(seed) {
         this.seed = seed;
         this.ores = [
-            { id: BLOCK.COAL_ORE.id, minY: 5, maxY: 55, chance: 0.35, radius: 2 },
-            { id: BLOCK.IRON_ORE.id, minY: 5, maxY: 45, chance: 0.25, radius: 2 },
-            { id: BLOCK.COPPER_ORE.id, minY: 10, maxY: 50, chance: 0.30, radius: 2 },
-            { id: BLOCK.GOLD_ORE.id, minY: 5, maxY: 30, chance: 0.12, radius: 1.5 },
-            { id: BLOCK.DIAMOND_ORE.id, minY: 1, maxY: 18, chance: 0.06, radius: 1.3 }
+            { id: BLOCK.COAL_ORE.id, minY: 5, maxY: 100, chance: 0.35, radius: 2 },
+            { id: BLOCK.IRON_ORE.id, minY: 5, maxY: 80, chance: 0.25, radius: 2 },
+            { id: BLOCK.COPPER_ORE.id, minY: 10, maxY: 85, chance: 0.30, radius: 2 },
+            { id: BLOCK.GOLD_ORE.id, minY: 5, maxY: 40, chance: 0.12, radius: 1.5 },
+            { id: BLOCK.DIAMOND_ORE.id, minY: 1, maxY: 24, chance: 0.06, radius: 1.3 }
         ];
 
         this.cellSize = 8;

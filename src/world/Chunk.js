@@ -37,8 +37,7 @@ const CHUNK_MATERIALS = [
 export class Chunk {
 
     static SIZE = 16;
-    static HEIGHT = 64;
-
+    static HEIGHT = 128;
 
     constructor(
         scene,
