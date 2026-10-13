@@ -84,19 +84,9 @@ getHeight(worldX, worldZ) {
     // TYPE DE BLOC
     // ==========================================
 
-    getBlock(
-        worldX,
-        y,
-        worldZ
-    ) {
-
-        const height =
-            this.getHeight(
-                worldX,
-                worldZ
-            );
-
-
+    getBlock(x, y, z) {
+    const biome = this.biomes.getBiome(x, z);
+    const height = this.getHeight(x, z);
         // Au-dessus du terrain
 
 if (y > height) return BLOCK.AIR.id;
@@ -112,7 +102,7 @@ if (y > height) return BLOCK.AIR.id;
 }
 
         // Terre
-        
+
 if (y >= height - 3) {
     return biome === BIOME.DESERT
         ? BLOCK.SAND.id
