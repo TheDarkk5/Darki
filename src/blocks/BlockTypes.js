@@ -42,24 +42,62 @@ export const BLOCK = {
     },
 
     OAK_LEAVES: {
-    id: 6,
-    name: "Feuilles de chêne",
-    material: "OAK_LEAVES",
-    solid: true,
-    transparent: true
-},
+        id: 6,
+        name: "Feuilles de chêne",
+        material: "OAK_LEAVES",
+        solid: true,
+        transparent: true
+    },
 
-SAND: {
-    id: 7,
-    name: "Sable",
-    material: "SAND",
+    SAND: {
+        id: 7,
+        name: "Sable",
+        material: "SAND",
+        solid: true
+    },
+
+    SNOW: {
+        id: 8,
+        name: "Neige",
+        material: "SNOW",
+        solid: true
+    },
+
+    COAL_ORE: {
+    id: 9,
+    name: "Minerai de charbon",
+    material: "COAL_ORE",
     solid: true
 },
 
-SNOW: {
-    id: 8,
-    name: "Neige",
-    material: "SNOW",
+IRON_ORE: {
+    id: 10,
+    name: "Minerai de fer",
+    material: "IRON_ORE",
+    solid: true
+},
+
+COPPER_ORE: {
+    id: 11,
+    name: "Minerai de cuivre",
+    material: "COPPER_ORE",
+    solid: true
+},
+
+GOLD_ORE: {
+    id: 12,
+    name: "Minerai d'or",
+    material: "GOLD_ORE",
+    solid: true
+},
+
+DIAMOND_ORE: {
+    id: 13,
+    name: "Minerai de diamant",
+    material: "DIAMOND_ORE",
     solid: true
 }
+
+
+
 };

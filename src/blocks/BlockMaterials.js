@@ -32,6 +32,9 @@ const oakLeaves = loadTexture("/textures/oak_leaves.png");
 const sand = loadTexture("/textures/sand.png");
 const snow = loadTexture("/textures/snow.png");
 
+
+
+
 // ================================
 // MATÉRIAUX
 // ================================
@@ -52,6 +55,7 @@ const oakTopMaterial = createMaterial(oakTop);
 const oakSideMaterial = createMaterial(oakSide);
 const oakPlanksMaterial = createMaterial(oakPlanks);
 
+
 // Feuilles : transparence découpée
 const oakLeavesMaterial = new THREE.MeshLambertMaterial({
     map: oakLeaves,
@@ -67,6 +71,10 @@ const sandMaterial = new THREE.MeshLambertMaterial({
 
 const snowMaterial = new THREE.MeshLambertMaterial({
     map: snow
+});
+
+const oreMaterial = (name) => new THREE.MeshLambertMaterial({
+    map: loadTexture(`/textures/${name}.png`)
 });
 // ================================
 // BLOCS
@@ -100,5 +108,12 @@ export const BLOCK_MATERIALS = {
     OAK_LEAVES: oakLeavesMaterial,
 
     SAND: sandMaterial,
-    SNOW: snowMaterial 
+    SNOW: snowMaterial,
+
+    // Minerais
+    COAL_ORE: oreMaterial("coal_ore"),
+    IRON_ORE: oreMaterial("iron_ore"),
+    COPPER_ORE: oreMaterial("copper_ore"),
+    GOLD_ORE: oreMaterial("gold_ore"),
+    DIAMOND_ORE: oreMaterial("diamond_ore")
 };

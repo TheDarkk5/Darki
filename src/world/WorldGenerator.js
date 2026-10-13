@@ -7,12 +7,14 @@ from "alea";
 import { BLOCK }
 from "../blocks/BlockTypes.js";
 import { BiomeGenerator, BIOME } from "./BiomeGenerator.js";
+import { OreGenerator } from "./OreGenerator.js";
 
 export class WorldGenerator {
 
 constructor(seed) {
     this.seed = seed;
     this.biomes = new BiomeGenerator(seed);
+    this.ores = new OreGenerator(this.seed);
 
         const random =
             alea(seed);
@@ -108,7 +110,7 @@ if (y >= height - 3) {
         : BLOCK.DIRT.id;
 }
 
-return BLOCK.STONE.id;
+return this.ores.getBlock(x, y, z);
 
     }
 
