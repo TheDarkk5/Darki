@@ -11,6 +11,10 @@ export class World {
 
         this.chunks = new Map();
 
+        this.chunkQueue = [];
+        this.queuedChunks = new Set();
+        this.chunksPerFrame = 1;
+
 this.renderDistance = 3;
 this.unloadDistance = this.renderDistance + 2;
 
@@ -42,47 +46,9 @@ this.generator = new WorldGenerator(this.seed);
     // GENERATION DU MONDE
     // ==========================================
 
-  generateWorld() {
-
-    // =========================
-    // CREATION DES CHUNKS
-    // =========================
-
-    for (
-        let chunkX = -1;
-        chunkX <= 1;
-        chunkX++
-    ) {
-
-        for (
-            let chunkZ = -1;
-            chunkZ <= 1;
-            chunkZ++
-        ) {
-
-            this.createChunk(
-                chunkX,
-                chunkZ
-            );
-
-        }
-
-    }
-
-
-    // =========================
-    // CREATION DES MESHES
-    // =========================
-
-    for (
-        const chunk
-        of this.chunks.values()
-    ) {
-
-        chunk.buildMesh();
-
-    }
-
+generateWorld() {
+    // Préparer les chunks autour du point de départ
+    this.loadChunksAroundPlayer(0, 0);
 }
 
 
@@ -449,6 +415,7 @@ addBlock(
 
 }
 
+
 update(playerPosition) {
     const chunkX = Math.floor(
         playerPosition.x / Chunk.SIZE
@@ -459,107 +426,68 @@ update(playerPosition) {
     );
 
     if (
-        chunkX === this.lastPlayerChunkX &&
-        chunkZ === this.lastPlayerChunkZ
+        chunkX !== this.lastPlayerChunkX ||
+        chunkZ !== this.lastPlayerChunkZ
     ) {
-        return;
+        this.lastPlayerChunkX = chunkX;
+        this.lastPlayerChunkZ = chunkZ;
+
+        // Supprimer les anciennes demandes
+        this.chunkQueue = [];
+        this.queuedChunks.clear();
+
+        // Préparer les nouveaux chunks
+        this.loadChunksAroundPlayer(chunkX, chunkZ);
+
+        this.unloadDistantChunks(chunkX, chunkZ);
     }
 
-    this.lastPlayerChunkX = chunkX;
-    this.lastPlayerChunkZ = chunkZ;
-
-    this.loadChunksAroundPlayer(chunkX, chunkZ);
-
-    this.unloadDistantChunks(chunkX, chunkZ);
+    // Un seul nouveau chunk par frame
+    this.processChunkQueue(playerPosition);
 }
 
-loadChunksAroundPlayer(
-    centerChunkX,
-    centerChunkZ
-) {
+
+
+loadChunksAroundPlayer(centerChunkX, centerChunkZ) {
+    const pending = [];
 
     for (
         let x = -this.renderDistance;
         x <= this.renderDistance;
         x++
     ) {
-
         for (
             let z = -this.renderDistance;
             z <= this.renderDistance;
             z++
         ) {
+            const chunkX = centerChunkX + x;
+            const chunkZ = centerChunkZ + z;
 
-            const chunkX =
-                centerChunkX + x;
+            const key = this.getChunkKey(chunkX, chunkZ);
 
-            const chunkZ =
-                centerChunkZ + z;
-
-
-            const key =
-                this.getChunkKey(
-                    chunkX,
-                    chunkZ
-                );
-
-
-            // Chunk déjà présent
             if (
-                this.chunks.has(key)
+                this.chunks.has(key) ||
+                this.queuedChunks.has(key)
             ) {
                 continue;
             }
 
-
-            this.createChunk(
+            pending.push({
                 chunkX,
-                chunkZ
-            );
-
+                chunkZ,
+                distance: x * x + z * z
+            });
         }
-
     }
 
+    pending.sort((a, b) => a.distance - b.distance);
 
-    // Maintenant que tous les chunks existent,
-    // on construit les meshes manquants.
-
-    for (
-        let x = -this.renderDistance;
-        x <= this.renderDistance;
-        x++
-    ) {
-
-        for (
-            let z = -this.renderDistance;
-            z <= this.renderDistance;
-            z++
-        ) {
-
-            const chunk =
-                this.chunks.get(
-                    this.getChunkKey(
-                        centerChunkX + x,
-                        centerChunkZ + z
-                    )
-                );
-
-
-            if (
-                chunk &&
-                !chunk.mesh
-            ) {
-
-                chunk.buildMesh();
-
-            }
-
-        }
-
+    for (const chunk of pending) {
+        this.queueChunk(chunk.chunkX, chunk.chunkZ);
     }
-
 }
+
 
 unloadDistantChunks(playerChunkX, playerChunkZ) {
     for (const [key, chunk] of this.chunks) {
@@ -587,6 +515,70 @@ setRenderDistance(distance) {
     // Force le rechargement des chunks au prochain update()
     this.lastPlayerChunkX = null;
     this.lastPlayerChunkZ = null;
+}
+
+
+queueChunk(chunkX, chunkZ) {
+    const key = this.getChunkKey(chunkX, chunkZ);
+
+    if (
+        this.chunks.has(key) ||
+        this.queuedChunks.has(key)
+    ) {
+        return;
+    }
+
+    this.chunkQueue.push({ chunkX, chunkZ });
+    this.queuedChunks.add(key);
+}
+
+
+processChunkQueue(playerPosition) {
+    const centerX = Math.floor(
+        playerPosition.x / Chunk.SIZE
+    );
+
+    const centerZ = Math.floor(
+        playerPosition.z / Chunk.SIZE
+    );
+
+    let processed = 0;
+
+    while (
+        processed < this.chunksPerFrame &&
+        this.chunkQueue.length > 0
+    ) {
+        const next = this.chunkQueue.shift();
+
+        const key = this.getChunkKey(
+            next.chunkX,
+            next.chunkZ
+        );
+
+        this.queuedChunks.delete(key);
+
+        // Ignorer les chunks devenus trop éloignés
+        if (
+            Math.abs(next.chunkX - centerX) > this.renderDistance ||
+            Math.abs(next.chunkZ - centerZ) > this.renderDistance
+        ) {
+            continue;
+        }
+
+        if (this.chunks.has(key)) {
+            continue;
+        }
+
+        this.createChunk(next.chunkX, next.chunkZ);
+
+        const chunk = this.chunks.get(key);
+
+        if (chunk) {
+            chunk.buildMesh();
+        }
+
+        processed++;
+    }
 }
 
 }
