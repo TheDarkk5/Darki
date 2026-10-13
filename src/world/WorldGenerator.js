@@ -8,6 +8,7 @@ import { BLOCK }
 from "../blocks/BlockTypes.js";
 import { BiomeGenerator, BIOME } from "./BiomeGenerator.js";
 import { OreGenerator } from "./OreGenerator.js";
+import { CaveGenerator } from "./CaveGenerator.js";
 
 export class WorldGenerator {
 
@@ -15,6 +16,7 @@ constructor(seed) {
     this.seed = seed;
     this.biomes = new BiomeGenerator(seed);
     this.ores = new OreGenerator(this.seed);
+    this.caves = new CaveGenerator(seed);
 
         const random =
             alea(seed);
@@ -88,6 +90,8 @@ getHeight(worldX, worldZ) {
     getBlock(x, y, z) {
     const biome = this.biomes.getBiome(x, z);
     const height = this.getHeight(x, z);
+    const surfaceY = this.getHeight(x, z);
+
         // Au-dessus du terrain
 
 if (y > height) return BLOCK.AIR.id;
@@ -100,6 +104,11 @@ if (y > height) return BLOCK.AIR.id;
     if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
 
     return BLOCK.GRASS.id;
+}
+
+// Générer des grottes uniquement sous la surface
+if (y < surfaceY - 4 && this.caves.isCave(x, y, z, surfaceY)) {
+    return BLOCK.AIR.id;
 }
 
         // Terre
