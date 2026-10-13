@@ -22,6 +22,8 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.OAK_LOG[0],  // 5 - Bois côtés
     BLOCK_MATERIALS.OAK_PLANKS,
     BLOCK_MATERIALS.OAK_LEAVES, // 7 - Feuilles de chêne
+    BLOCK_MATERIALS.SAND, // index 8
+    BLOCK_MATERIALS.SNOW  // index 9
 ];
 
 
@@ -110,6 +112,9 @@ getMaterialIndex(blockId, normal) {
     if (blockId === BLOCK.OAK_LEAVES.id) {
         return 7;
     }
+
+    if (blockId === BLOCK.SAND.id) return 8;
+    if (blockId === BLOCK.SNOW.id) return 9;
     
     return 2;
     
