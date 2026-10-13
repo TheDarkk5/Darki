@@ -9,6 +9,7 @@ import {Inventory} from "./ui/Inventory.js";
 import { InventoryStorage } from "./systems/InventoryStorage.js";
 import { BLOCK } from "./blocks/BlockTypes.js";
 import { PlayerHand } from "./player/PlayerHand.js";
+import { MusicSystem } from "./systems/MusicSystem.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -308,6 +309,11 @@ player.controls.addEventListener("unlock", () => {
     }
 });
 
+const music = new MusicSystem();
+
+document.addEventListener("pointerdown", () => {
+    music.start();
+}, { once: true });
 // ==========================================
 // GAME LOOP
 // ==========================================
