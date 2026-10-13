@@ -22,7 +22,7 @@ export class Player {
         // TAILLE DU JOUEUR
         // =========================
 
- this.height = 0.6;
+ this.height = 2;
 this.radius = 0.3;
 
         // =========================
