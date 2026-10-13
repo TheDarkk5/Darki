@@ -22,9 +22,8 @@ export class Player {
         // TAILLE DU JOUEUR
         // =========================
 
-        this.height = 2;
-        this.radius = 0.6;
-
+ this.height = 2;
+this.radius = 0.3;
 
         // =========================
         // POSITION DE DEPART
@@ -246,20 +245,14 @@ this.controls.addEventListener("unlock", () => {
     // UPDATE
     // ==========================================
 
-    update(deltaTime) {
+update(deltaTime) {
+    if (!this.controls.isLocked) return;
 
-        if (!this.controls.isLocked) {
+    const dt = Math.min(deltaTime, 0.05);
 
-            return;
-
-        }
-
-
-        this.updateMovement(deltaTime);
-
-        this.updateGravity(deltaTime);
-
-    }
+    this.updateMovement(dt);
+    this.updateGravity(dt);
+}
 
 
     // ==========================================
@@ -370,22 +363,36 @@ this.controls.addEventListener("unlock", () => {
     // ==========================================
 
 updateGravity(deltaTime) {
-    this.velocity.y -= this.gravity * deltaTime;
+    const dt = Math.min(deltaTime, 0.05);
+
+    this.velocity.y -= this.gravity * dt;
 
     const oldY = this.camera.position.y;
+    const targetY = oldY + this.velocity.y * dt;
 
-    this.camera.position.y += this.velocity.y * deltaTime;
+    // Sous-étapes pour éviter de traverser un bloc
+    const steps = Math.max(
+        1,
+        Math.ceil(Math.abs(targetY - oldY) / 0.1)
+    );
 
-    if (this.checkCollision()) {
-        this.camera.position.y = oldY;
+    const stepY = (targetY - oldY) / steps;
 
-        if (this.velocity.y < 0) {
-            this.onGround = true;
+    this.onGround = false;
+
+    for (let i = 0; i < steps; i++) {
+        this.camera.position.y += stepY;
+
+        if (this.checkCollision()) {
+            this.camera.position.y -= stepY;
+
+            if (this.velocity.y < 0) {
+                this.onGround = true;
+            }
+
+            this.velocity.y = 0;
+            break;
         }
-
-        this.velocity.y = 0;
-    } else {
-        this.onGround = false;
     }
 }
 
@@ -394,103 +401,31 @@ updateGravity(deltaTime) {
     // COLLISION
     // ==========================================
 
-    checkCollision() {
+checkCollision() {
+    const p = this.camera.position;
+    const epsilon = 0.001;
 
-        const position =
-            this.camera.position;
+    const minX = Math.floor(p.x - this.radius + epsilon);
+    const maxX = Math.floor(p.x + this.radius - epsilon);
 
+    const minY = Math.floor(p.y - this.height + epsilon);
+    const maxY = Math.floor(p.y - epsilon);
 
-        // La caméra représente les yeux.
-        // On calcule donc les pieds.
+    const minZ = Math.floor(p.z - this.radius + epsilon);
+    const maxZ = Math.floor(p.z + this.radius - epsilon);
 
-        const feetY =
-            position.y -
-            this.height;
-
-
-        const minX =
-            Math.floor(
-                position.x -
-                this.radius +
-                0.5
-            );
-
-        const maxX =
-            Math.floor(
-                position.x +
-                this.radius +
-                0.5
-            );
-
-
-        const minY =
-            Math.floor(
-                feetY +
-                0.5
-            );
-
-        const maxY =
-            Math.floor(
-                position.y +
-                0.5
-            );
-
-
-        const minZ =
-            Math.floor(
-                position.z -
-                this.radius +
-                0.5
-            );
-
-        const maxZ =
-            Math.floor(
-                position.z +
-                this.radius +
-                0.5
-            );
-
-
-        for (
-            let x = minX;
-            x <= maxX;
-            x++
-        ) {
-
-            for (
-                let y = minY;
-                y <= maxY;
-                y++
-            ) {
-
-                for (
-                    let z = minZ;
-                    z <= maxZ;
-                    z++
-                ) {
-
-                    if (
-                        this.isSolidBlock(
-                            x,
-                            y,
-                            z
-                        )
-                    ) {
-
-                        return true;
-
-                    }
-
+    for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+            for (let z = minZ; z <= maxZ; z++) {
+                if (this.isSolidBlock(x, y, z)) {
+                    return true;
                 }
-
             }
-
         }
-
-
-        return false;
-
     }
+
+    return false;
+}
 
 
     // ==========================================
