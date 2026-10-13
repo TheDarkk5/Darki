@@ -63,7 +63,7 @@ const oakLeavesMaterial = new THREE.MeshLambertMaterial({
     color: 0x73b644,
 
     // Transparence découpée
-    transparent: false,
+    transparent: true,
     alphaTest: 0.5,
 
     // Afficher uniquement les faces avant
