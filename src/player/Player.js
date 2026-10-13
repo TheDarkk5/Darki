@@ -31,16 +31,11 @@ this.radius = 0.3;
 
 const spawnX = 8;
 const spawnZ = 8;
-
-const terrainHeight =
-    this.world.generator.getHeight(
-        spawnX,
-        spawnZ
-    );
+const spawnY = this.findSafeSpawn(spawnX, spawnZ);
 
 this.camera.position.set(
     spawnX + 0.5,
-    terrainHeight + this.height + 2,
+    spawnY + this.height,
     spawnZ + 0.5
 );
 
@@ -442,5 +437,28 @@ isSolidBlock(x, y, z) {
 
 }
 
+findSafeSpawn(x, z) {
+    const height = this.world.generator.getHeight(x, z);
+
+    for (let y = height + 1; y < 64 - this.height; y++) {
+        let free = true;
+
+        for (let offset = 0; offset < Math.ceil(this.height); offset++) {
+            if (this.world.isSolidBlock(x, y + offset, z)) {
+                free = false;
+                break;
+            }
+        }
+
+        if (
+            free &&
+            this.world.isSolidBlock(x, y - 1, z)
+        ) {
+            return y;
+        }
+    }
+
+    return height + 1;
+}
 
 }
