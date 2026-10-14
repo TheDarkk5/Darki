@@ -265,12 +265,14 @@ renderDistanceValue.textContent = world.renderDistance;
 
 // Ouvrir les options
 optionsButton.addEventListener("click", () => {
+    mainMenu.style.display = "none";
     optionsMenu.style.display = "flex";
 });
 
 // Retour au menu principal
 optionsBackButton.addEventListener("click", () => {
     optionsMenu.style.display = "none";
+    mainMenu.style.display = "flex";
 });
 
 // Modifier la distance
