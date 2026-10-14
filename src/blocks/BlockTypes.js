@@ -109,6 +109,14 @@ export const BLOCK = {
         material: "DIAMOND_ORE",
         texture: "/textures/diamond_ore.png",
         solid: true
+    },
+
+    CRAFTING_TABLE: {
+        id: 14,
+        name: "Table de craft",
+        material: "CRAFTING_TABLE",
+        texture: "/textures/crafting_table.png",
+        solid: true
     }
 };
 

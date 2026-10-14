@@ -124,6 +124,13 @@ getMaterialIndex(blockId, normal) {
     if (blockId === BLOCK.COPPER_ORE.id) return 12;
     if (blockId === BLOCK.GOLD_ORE.id) return 13;
     if (blockId === BLOCK.DIAMOND_ORE.id) return 14;
+    if (blockId === BLOCK.CRAFTING_TABLE.id) {
+        // Dessus et dessous
+        if (normal[1] !== 0) return 2;
+
+        // Côtés
+        return 1;
+    }
     return 2;
     
 }

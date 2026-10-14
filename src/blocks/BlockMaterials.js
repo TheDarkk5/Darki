@@ -32,9 +32,9 @@ const oakLeaves = loadTexture("/textures/oak_leaves.png");
 const sand = loadTexture("/textures/sand.png");
 const snow = loadTexture("/textures/snow.png");
 
-
-
-
+const craftingTableFront = loadTexture("/textures/crafting_table_front.png");
+const craftingTableSide = loadTexture("/textures/crafting_table_side.png");
+const craftingTableTop = loadTexture("/textures/crafting_table_top.png");
 // ================================
 // MATÉRIAUX
 // ================================
@@ -85,18 +85,22 @@ const snowMaterial = new THREE.MeshLambertMaterial({
 const oreMaterial = (name) => new THREE.MeshLambertMaterial({
     map: loadTexture(`/textures/${name}.png`)
 });
+
+const craftingTableTopMaterial = createMaterial(craftingTableTop);
+const craftingTableSideMaterial = createMaterial(craftingTableSide);
+const craftingTableFrontMaterial = createMaterial(craftingTableFront);
 // ================================
 // BLOCS
 // ================================
 
 export const BLOCK_MATERIALS = {
     GRASS: [
-        grassSideMaterial,
-        grassSideMaterial,
-        grassTopMaterial,
-        dirtMaterial,
-        grassSideMaterial,
-        grassSideMaterial
+        grassSideMaterial, // Côté
+        grassSideMaterial, // Côté
+        grassTopMaterial, // Haut
+        dirtMaterial, // Bas
+        grassSideMaterial, // Côté
+        grassSideMaterial  // Côté
     ],
 
     DIRT: dirtMaterial,
@@ -124,5 +128,14 @@ export const BLOCK_MATERIALS = {
     IRON_ORE: oreMaterial("iron_ore"),
     COPPER_ORE: oreMaterial("copper_ore"),
     GOLD_ORE: oreMaterial("gold_ore"),
-    DIAMOND_ORE: oreMaterial("diamond_ore")
+    DIAMOND_ORE: oreMaterial("diamond_ore"),
+
+    CRAFTING_TABLE: [
+        craftingTableSideMaterial, // Côté
+        craftingTableSideMaterial, // Côté  
+        craftingTableTopMaterial, // Haut
+        craftingTableTopMaterial, // Bas
+        craftingTableFrontMaterial, // Côté avant
+        craftingTableSideMaterial  // Côté arrière
+    ],
 };
