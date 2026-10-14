@@ -28,7 +28,10 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.IRON_ORE,    // 11
     BLOCK_MATERIALS.COPPER_ORE,  // 12
     BLOCK_MATERIALS.GOLD_ORE,    // 13
-    BLOCK_MATERIALS.DIAMOND_ORE  // 14
+    BLOCK_MATERIALS.DIAMOND_ORE,  // 14
+    BLOCK_MATERIALS.CRAFTING_TABLE[0], // 15 - Côtés
+    BLOCK_MATERIALS.CRAFTING_TABLE[2], // 16 - Dessus
+    BLOCK_MATERIALS.CRAFTING_TABLE[4], // 17 - Devant
 ];
 
 
@@ -125,16 +128,11 @@ getMaterialIndex(blockId, normal) {
     if (blockId === BLOCK.GOLD_ORE.id) return 13;
     if (blockId === BLOCK.DIAMOND_ORE.id) return 14;
     if (blockId === BLOCK.CRAFTING_TABLE.id) {
-        // Dessus et dessous
-        if (normal[1] !== 0) return 2;
-
-        // Côtés
-        return 1;
+        if (normal[1] === 1) return 16;
+        if (normal[2] === 1) return 17;
+        return 15;
     }
-    return 2;
-    
 }
-
     // ==========================================
     // INDEX DU TABLEAU
     // ==========================================

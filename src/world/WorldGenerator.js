@@ -124,4 +124,10 @@ if (y > height) {
     return this.ores.getBlock(x, y, z);
 }
 
+getBiome(x, z) {
+    return this.biomes.getBiome(
+        Math.floor(x),
+        Math.floor(z)
+    );
+}
 }

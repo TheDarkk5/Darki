@@ -10,6 +10,7 @@ import { InventoryStorage } from "./systems/InventoryStorage.js";
 import { BLOCK } from "./blocks/BlockTypes.js";
 import { PlayerHand } from "./player/PlayerHand.js";
 import { MusicSystem } from "./systems/MusicSystem.js";
+import { BIOME } from "./world/BiomeGenerator.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -416,11 +417,16 @@ function updateDebugMenu(fps) {
 
     debugFacing.textContent = `Facing : ${directions[index]}`;
 
-    // À connecter au générateur de biomes du monde
-    const biome = world.generator?.getBiome?.(x, z);
+    const biome = world.generator.getBiome(x, z);
+
+    const biomeNames = {
+        [BIOME.DESERT]: "Désert",
+        [BIOME.SNOW]: "Biome enneigé",
+        [BIOME.MOUNTAINS]: "Montagnes"
+    };
 
     debugBiome.textContent =
-        `Biome : ${biome?.name ?? biome ?? "Inconnu"}`;
+        `Biome : ${biomeNames[biome] ?? biome}`;
 }
 
 // ==========================================
