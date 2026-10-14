@@ -349,6 +349,80 @@ function updateFPS() {
     }
 }
 
+
+const debugMenu = document.getElementById("debug-menu");
+
+const debugFPS = document.getElementById("debug-fps");
+const debugXYZ = document.getElementById("debug-xyz");
+const debugBlock = document.getElementById("debug-block");
+const debugChunk = document.getElementById("debug-chunk");
+const debugFacing = document.getElementById("debug-facing");
+const debugBiome = document.getElementById("debug-biome");
+
+let debugVisible = false;
+
+window.addEventListener("keydown", (event) => {
+    if (event.key !== "F3" || event.repeat) return;
+
+    event.preventDefault();
+
+    debugVisible = !debugVisible;
+    debugMenu.style.display = debugVisible ? "block" : "none";
+
+    document.getElementById("fps-counter").style.display =
+        debugVisible ? "none" : "block";
+});
+
+const debugDirection = new THREE.Vector3();
+
+function updateDebugMenu(fps) {
+    if (!debugVisible) return;
+
+    const position = camera.position;
+
+    const x = position.x;
+    const y = position.y;
+    const z = position.z;
+
+    debugFPS.textContent = `FPS : ${fps}`;
+
+    debugXYZ.textContent =
+        `XYZ : ${x.toFixed(3)} / ${y.toFixed(3)} / ${z.toFixed(3)}`;
+
+    debugBlock.textContent =
+        `Block : ${Math.floor(x)} ${Math.floor(y)} ${Math.floor(z)}`;
+
+    const chunkX = Math.floor(x / 16);
+    const chunkZ = Math.floor(z / 16);
+
+    debugChunk.textContent = `Chunk : ${chunkX} ${chunkZ}`;
+
+    camera.getWorldDirection(debugDirection);
+
+    const angle = Math.atan2(
+        debugDirection.x,
+        -debugDirection.z
+    );
+
+    const directions = [
+        "North (-Z)",
+        "East (+X)",
+        "South (+Z)",
+        "West (-X)"
+    ];
+
+    const index =
+        ((Math.round(angle / (Math.PI / 2)) % 4) + 4) % 4;
+
+    debugFacing.textContent = `Facing : ${directions[index]}`;
+
+    // À connecter au générateur de biomes du monde
+    const biome = world.generator?.getBiome?.(x, z);
+
+    debugBiome.textContent =
+        `Biome : ${biome?.name ?? biome ?? "Inconnu"}`;
+}
+
 // ==========================================
 // GAME LOOP
 // ==========================================
@@ -374,7 +448,7 @@ function animate() {
             blockInteraction.update();
         }
     }
-
+    updateDebugMenu(Math.round(1 / Math.max(clock.getDelta(), 0.001)));
     renderer.render(scene, camera);
 }
 
