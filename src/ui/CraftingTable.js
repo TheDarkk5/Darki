@@ -150,7 +150,6 @@ export class CraftingTable {
         if (this.inventory.player.controls.isLocked) {
             this.inventory.player.controls.unlock();
         }
-
         this.element.style.display = "flex";
         this.inventory.element.style.display = "none";
 
