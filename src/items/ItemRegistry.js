@@ -1,29 +1,21 @@
+
 import { BLOCK } from "../blocks/BlockTypes.js";
-import { ITEM } from "./ItemTypes.js";
+import { ITEM } from "../items/ItemTypes.js";
 
-export function getInventoryItem(id) {
-    const item = Object.values(ITEM).find(
-        item => item.id === id
-    );
+const registry = new Map();
 
-    if (item) {
-        return {
-            ...item,
-            type: "item"
-        };
-    }
+for (const block of Object.values(BLOCK)) {
+    registry.set(block.id, block);
+}
 
-    const block = Object.values(BLOCK).find(
-        block => block.id === id
-    );
+for (const item of Object.values(ITEM)) {
+    registry.set(item.id, item);
+}
 
-    if (block && block.id !== BLOCK.AIR.id) {
-        return {
-            ...block,
-            type: "block",
-            maxStack: 64
-        };
-    }
+export function getObjectById(id) {
+    return registry.get(id) || null;
+}
 
-    return null;
+export function getObjectTexture(id) {
+    return getObjectById(id)?.texture || null;
 }

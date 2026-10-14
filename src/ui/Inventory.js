@@ -22,22 +22,6 @@ export class Inventory {
         );
         this.resultSlot = document.getElementById("craft-result");
 
-        this.textures = {
-            [BLOCK.GRASS.id]: "/textures/grass_top.png",
-            [BLOCK.DIRT.id]: "/textures/dirt.png",
-            [BLOCK.STONE.id]: "/textures/stone.png",
-            [BLOCK.OAK_LOG.id]: "/textures/oak_log.png",
-            [BLOCK.OAK_PLANKS.id]: "/textures/oak_planks.png",
-            [BLOCK.OAK_LEAVES.id]: "/textures/oak_leaves.png",
-            [BLOCK.SAND.id]: "/textures/sand.png",
-            [BLOCK.SNOW.id]: "/textures/snow.png",
-            [BLOCK.COAL_ORE.id]: "/textures/coal_ore.png",
-            [BLOCK.IRON_ORE.id]: "/textures/iron_ore.png",
-            [BLOCK.COPPER_ORE.id]: "/textures/copper_ore.png",
-            [BLOCK.GOLD_ORE.id]: "/textures/gold_ore.png",
-            [BLOCK.DIAMOND_ORE.id]: "/textures/diamond_ore.png"
-        };
-
         this.cursorElement = document.createElement("div");
         this.cursorElement.className = "cursor-item";
         document.body.appendChild(this.cursorElement);
@@ -277,7 +261,7 @@ export class Inventory {
 
         const definition = getInventoryItem(item.blockId);
         const name = definition?.name ?? String(item.blockId);
-        const texture = definition?.texture ?? this.textures[item.blockId];
+        const texture = definition?.texture ?? null;
         element.title = name;
 
         const createLabel = () => {

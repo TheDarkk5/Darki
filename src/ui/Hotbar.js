@@ -1,22 +1,6 @@
 
 import { getInventoryItem } from "../items/ItemRegistry.js";
 
-const BLOCK_TEXTURES = {
-    GRASS: "/textures/grass_top.png",
-    DIRT: "/textures/dirt.png",
-    STONE: "/textures/stone.png",
-    OAK_LOG: "/textures/oak_log.png",
-    OAK_PLANKS: "/textures/oak_planks.png",
-    OAK_LEAVES: "/textures/oak_leaves.png",
-    SAND: "/textures/sand.png",
-    SNOW: "/textures/snow.png",
-    COAL_ORE: "/textures/coal_ore.png",
-    IRON_ORE: "/textures/iron_ore.png",
-    COPPER_ORE: "/textures/copper_ore.png",
-    GOLD_ORE: "/textures/gold_ore.png",
-    DIAMOND_ORE: "/textures/diamond_ore.png"
-};
-
 export class Hotbar {
     constructor() {
         this.selectedSlot = 0;
@@ -95,7 +79,7 @@ export class Hotbar {
 
             if (!item) return;
 
-            const texture = item.texture ?? BLOCK_TEXTURES[item.material];
+            const texture = item.texture ?? null;
             const createLabel = () => {
                 const label = document.createElement("span");
                 label.className = "hotbar-item-label";
