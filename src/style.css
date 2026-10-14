@@ -273,7 +273,7 @@ canvas {
 #options-menu {
     position: fixed;
     inset: 0;
-    z-index: 1100;
+    z-index: 2000;
     display: none;
     align-items: center;
     justify-content: center;
@@ -287,14 +287,20 @@ canvas {
     text-align: center;
     background: #c6c6c6;
     border: 4px solid #222;
+    position: relative;
+    z-index: 2001;
+    color: #222;
     box-shadow:
         inset 4px 4px #fff,
         inset -4px -4px #555;
 }
 
-.options-container h2 {
+.options-container h2,
+.options-container label,
+.options-container span {
     color: #222;
-    margin-bottom: 25px;
+    visibility: visible;
+    opacity: 1;
 }
 
 .option-setting {
@@ -311,6 +317,12 @@ canvas {
     accent-color: #4caf50;
 }
 
+#options-back-button {
+    display: block;
+    width: 100%;
+    max-width: 350px;
+    margin: 20px auto 0;
+}
 /* =================================
    INVENTAIRE : CRAFT / 27 CASES / HOTBAR
 ================================= */
