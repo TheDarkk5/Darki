@@ -106,8 +106,7 @@ export class Inventory {
     }
 
     handleSlot(index, button) {
-        if (!this.isOpen || (button !== 0 && button !== 2)) return;
-        if (!Number.isInteger(index) || index < 0 || index >= 36) return;
+if (!this.isOpen || (button !== 0 && button !== 2)) return;        if (!Number.isInteger(index) || index < 0 || index >= 36) return;
         const slot = this.storage.slots[index];
 
         if (button === 0) {

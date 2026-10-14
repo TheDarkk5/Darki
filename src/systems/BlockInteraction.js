@@ -25,6 +25,7 @@ export class BlockInteraction {
         this.hotbar = hotbar;
         this.inventory = inventory;
         this.hand = hand;
+        this.craftingTable = null;
 
         this.maxDistance = 5;
 
@@ -94,6 +95,9 @@ export class BlockInteraction {
 
     }
 
+setCraftingTable(craftingTable) {
+    this.craftingTable = craftingTable;
+}
 
     // ==========================================
     // EVENEMENTS
@@ -346,14 +350,45 @@ breakBlock() {
     // PLACER
     // ==========================================
 
+
 placeBlock() {
     if (!this.target || !this.player.controls.isLocked) {
         return;
     }
 
-    const x = this.target.x + Math.round(this.target.normal.x);
-    const y = this.target.y + Math.round(this.target.normal.y);
-    const z = this.target.z + Math.round(this.target.normal.z);
+    // Bloc actuellement visé par le joueur
+    const {
+        x: targetX,
+        y: targetY,
+        z: targetZ,
+        normal
+    } = this.target;
+
+    const targetBlockId = this.world.getBlock(
+        targetX,
+        targetY,
+        targetZ
+    );
+
+    // =====================================
+    // OUVRIR LA TABLE DE CRAFT
+    // =====================================
+
+    if (targetBlockId === BLOCK.CRAFTING_TABLE.id) {
+        if (this.craftingTable) {
+            this.craftingTable.open();
+        }
+
+        return;
+    }
+
+    // =====================================
+    // PLACEMENT NORMAL DES BLOCS
+    // =====================================
+
+    const x = targetX + Math.round(normal.x);
+    const y = targetY + Math.round(normal.y);
+    const z = targetZ + Math.round(normal.z);
 
     const slotIndex = this.hotbar.selectedSlot;
     const item = this.inventory.storage.slots[slotIndex];
@@ -361,7 +396,10 @@ placeBlock() {
     if (!item || item.count < 1) return;
 
     const definition = getInventoryItem(item.blockId);
-    if (!definition || definition.type !== "block") return;
+
+    if (!definition || definition.type !== "block") {
+        return;
+    }
 
     if (this.world.getBlock(x, y, z) !== BLOCK.AIR.id) {
         return;
@@ -371,21 +409,25 @@ placeBlock() {
         return;
     }
 
-    // Consommer uniquement après une pose réussie.
+    // Ajouter le bloc dans le monde
     if (!this.world.addBlock(x, y, z, definition.id)) {
         return;
     }
 
+    // Retirer un objet de la hotbar
     if (!this.inventory.storage.removeFromSlot(slotIndex, 1)) {
         this.world.removeBlock(x, y, z);
         return;
     }
 
+    // Actualiser les interfaces
     this.inventory.updateUI();
     this.hotbar.updateUI();
+
     this.clearTarget();
     this.hand.swing();
 }
+
 
     intersectsPlayer(x, y, z) {
         // La caméra représente les yeux ; les pieds sont à y - height.

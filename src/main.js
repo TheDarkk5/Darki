@@ -10,6 +10,7 @@ import { InventoryStorage } from "./systems/InventoryStorage.js";
 import { BLOCK } from "./blocks/BlockTypes.js";
 import { PlayerHand } from "./player/PlayerHand.js";
 import { MusicSystem } from "./systems/MusicSystem.js";
+import { CraftingTable } from "./ui/CraftingTable.js";
 import { BIOME } from "./world/BiomeGenerator.js";
 // ==========================================
 // SCENE
@@ -172,6 +173,12 @@ const blockInteraction = new BlockInteraction(
 );
 
 // inventory.addItem(BLOCK.OAK_LOG.id, 5);
+const craftingTable = new CraftingTable(inventory);
+blockInteraction.setCraftingTable(craftingTable);
+document.getElementById("crafting-table-close")
+    .addEventListener("click", () => {
+        craftingTable.close();
+    });
 
 const clock = new THREE.Clock();
 
@@ -242,6 +249,7 @@ quitButton.addEventListener(
 
     }
 );
+
 
 // =================================
 // OPTIONS - DISTANCE DE RENDU
