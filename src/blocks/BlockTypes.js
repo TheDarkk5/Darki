@@ -115,7 +115,7 @@ export const BLOCK = {
         id: 14,
         name: "Table de craft",
         material: "CRAFTING_TABLE",
-        texture: "/textures/crafting_table.png",
+        texture: "/textures/crafting_table_front.png",
         solid: true
     }
 };
