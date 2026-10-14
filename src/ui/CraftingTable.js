@@ -138,17 +138,7 @@ export class CraftingTable {
             this.grid.fill(null);
             this.updateUI();
         });
-
-        window.addEventListener("keydown", event => {
-    if (!this.isOpen || event.repeat) return;
-
-    if (event.code === "KeyE" || event.code === "Escape") {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        this.close();
-    }
-}, true);
-
+  
     }
 
     open() {

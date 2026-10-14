@@ -309,9 +309,19 @@ function openMainMenu() {
 }
 
 document.addEventListener("keydown", (event) => {
-    if (event.code === "Escape" && gameStarted) {
-        openMainMenu();
+    if (event.code !== "Escape" || !gameStarted) return;
+
+    if (craftingTable.isOpen) {
+        craftingTable.close();
+        return;
     }
+
+    if (inventory.isOpen) {
+        inventory.close();
+        return;
+    }
+
+    openMainMenu();
 });
 
 player.controls.addEventListener("unlock", () => {
@@ -462,7 +472,7 @@ function animate() {
             blockInteraction.update();
         }
     }
-    updateDebugMenu(Math.round(1 / Math.max(clock.getDelta(), 0.001)));
+    updateDebugMenu(Math.round(1 / Math.max(deltaTime, 0.001)));
     renderer.render(scene, camera);
 }
 
