@@ -719,16 +719,6 @@ buffer.indices.push(
     vertexIndex + 2,
     vertexIndex + 3
 );
-                    }
-
-                }
-
-            }
-
-        }
-
-
-
         // ======================================
         // CRÉATION BUFFER GEOMETRY
         // ======================================
