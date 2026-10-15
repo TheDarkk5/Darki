@@ -712,12 +712,12 @@ buffer.uvs.push(
 
 buffer.indices.push(
     vertexIndex,
-    vertexIndex + 2,
     vertexIndex + 1,
+    vertexIndex + 2,
 
     vertexIndex,
-    vertexIndex + 3,
-    vertexIndex + 2
+    vertexIndex + 2,
+    vertexIndex + 3
 );
                     }
 
