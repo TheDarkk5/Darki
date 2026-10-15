@@ -12,6 +12,7 @@ import { PlayerHand } from "./player/PlayerHand.js";
 import { MusicSystem } from "./systems/MusicSystem.js";
 import { CraftingTable } from "./ui/CraftingTable.js";
 import { BIOME } from "./world/BiomeGenerator.js";
+import { DayNightCycle } from "./systems/DayNightCycle.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -105,6 +106,11 @@ sun.position.set(
 
 scene.add(sun);
 
+const dayNightCycle = new DayNightCycle(
+    scene,
+    sun,
+    ambientLight
+);
 
 // ==========================================
 // MONDE
@@ -464,6 +470,8 @@ function animate() {
         clock.getDelta(),
         0.1
     );
+    // Cycle jour / nuit
+    dayNightCycle.update(deltaTime);
 
     // Charger les chunks même depuis le menu principal
     world.update(camera.position);
