@@ -39,8 +39,7 @@ export class DayNightCycle {
         // Midi = soleil au plus haut
         const angle = (this.time - 0.25) * Math.PI * 2;
 
-        const sunHeight = Math.sin(angle);
-
+const sunHeight = Math.cos(angle);
         this.sun.position.set(
             Math.cos(angle) * 100,
             sunHeight * 100,
@@ -53,12 +52,10 @@ export class DayNightCycle {
             -0.12,
             0.25
         );
+this.sun.intensity = 2.5 * daylight;
 
-        this.sun.intensity = daylight * 2;
-
-        // Lumière ambiante, même pendant la nuit
-        this.ambientLight.intensity =
-            0.12 + daylight * 0.58;
+this.ambientLight.intensity =
+    0.35 + daylight * 0.65;
 
         // Couleur du ciel
         this.skyColor.copy(this.nightSky);
