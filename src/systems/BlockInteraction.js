@@ -429,19 +429,29 @@ placeBlock() {
 }
 
 
-    intersectsPlayer(x, y, z) {
-        // La caméra représente les yeux ; les pieds sont à y - height.
-        const position = this.camera.position;
-        const height = this.player.height ?? 2;
-        const radius = this.player.radius ?? 0.3;
 
-        // Un simple contact avec une face est autorisé, pas un chevauchement.
-        return (
-            x < position.x + radius && x + 1 > position.x - radius &&
-            y < position.y && y + 1 > position.y - height &&
-            z < position.z + radius && z + 1 > position.z - radius
-        );
-    }
+intersectsPlayer(x, y, z) {
+    const position = this.camera.position;
+
+    const height = this.player.height ?? 2;
+    const eyeHeight = this.player.eyeHeight ?? 1.75;
+    const radius = this.player.radius ?? 0.3;
+
+    const feetY = position.y - eyeHeight;
+    const headY = feetY + height;
+
+    return (
+        x < position.x + radius &&
+        x + 1 > position.x - radius &&
+
+        y < headY &&
+        y + 1 > feetY &&
+
+        z < position.z + radius &&
+        z + 1 > position.z - radius
+    );
+}
+
 
 
 

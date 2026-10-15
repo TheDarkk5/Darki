@@ -22,9 +22,9 @@ export class Player {
         // TAILLE DU JOUEUR
         // =========================
 
- this.height = 2;
-this.radius = 0.3;
-
+this.height = 2;       // Hauteur totale : 2 blocs
+this.radius = 0.3;     // Demi-largeur : 0,3 bloc
+this.eyeHeight = 1.75; // Position des yeux depuis les pieds
         // =========================
         // POSITION DE DEPART
         // =========================
@@ -35,7 +35,7 @@ const spawnY = this.findSafeSpawn(spawnX, spawnZ);
 
 this.camera.position.set(
     spawnX + 0.5,
-    spawnY + this.height,
+    spawnY + this.eyeHeight,
     spawnZ + 0.5
 );
 
@@ -396,18 +396,25 @@ updateGravity(deltaTime) {
     // COLLISION
     // ==========================================
 
+
 checkCollision() {
     const p = this.camera.position;
     const epsilon = 0.001;
 
+    // Position des pieds et de la tête
+    const feetY = p.y - this.eyeHeight;
+    const headY = feetY + this.height;
+
+    // Limites horizontales
     const minX = Math.floor(p.x - this.radius + epsilon);
     const maxX = Math.floor(p.x + this.radius - epsilon);
 
-    const minY = Math.floor(p.y - this.height + epsilon);
-    const maxY = Math.floor(p.y - epsilon);
-
     const minZ = Math.floor(p.z - this.radius + epsilon);
     const maxZ = Math.floor(p.z + this.radius - epsilon);
+
+    // Limites verticales du corps
+    const minY = Math.floor(feetY + epsilon);
+    const maxY = Math.floor(headY - epsilon);
 
     for (let x = minX; x <= maxX; x++) {
         for (let y = minY; y <= maxY; y++) {
@@ -421,6 +428,7 @@ checkCollision() {
 
     return false;
 }
+
 
 
     // ==========================================
