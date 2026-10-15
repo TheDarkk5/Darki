@@ -40,7 +40,7 @@ const craftingTableTop = loadTexture("/textures/crafting_table_top.png");
 // ================================
 
 function createMaterial(texture) {
-    return new THREE.MeshBasicMaterial({
+    return new THREE.MeshLambertMaterial({
         map: texture
     });
 }

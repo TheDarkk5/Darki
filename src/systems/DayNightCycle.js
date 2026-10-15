@@ -61,12 +61,10 @@ updateLighting() {
         0.25
     );
 
-    // Soleil
-    this.sun.intensity = 2.5 * daylight;
+this.sun.intensity = 1.5 + daylight * 1.0;
 
-    // Lumière ambiante
-    this.ambientLight.intensity =
-        0.35 + daylight * 0.65;
+this.ambientLight.intensity =
+    0.8 + daylight * 0.4;
 
     // Couleur du ciel
     this.skyColor.copy(this.nightSky);
