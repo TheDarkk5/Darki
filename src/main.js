@@ -437,11 +437,14 @@ function updateDebugMenu(fps) {
 
     const biome = world.generator.getBiome(x, z);
 
-    const biomeNames = {
+     const biomeNames = {
         [BIOME.DESERT]: "Désert",
         [BIOME.SNOW]: "Biome enneigé",
-        [BIOME.MOUNTAINS]: "Montagnes"
+        [BIOME.MOUNTAINS]: "Montagnes",
+        [BIOME.PLAINS]: "Plaine",
+        [BIOME.FOREST]: "Forêt"
     };
+
 
     debugBiome.textContent =
         `Biome : ${biomeNames[biome] ?? biome}`;

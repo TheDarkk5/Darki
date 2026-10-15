@@ -115,9 +115,11 @@ if (y > height) {
 
     // Couches proches de la surface
     if (y >= height - 3) {
-        return biome === BIOME.DESERT
-            ? BLOCK.SAND.id
-            : BLOCK.DIRT.id;
+        if (biome === BIOME.DESERT) return BLOCK.SAND.id;
+        if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
+        if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
+
+        return BLOCK.DIRT.id;
     }
 
     // Pierre et minerais
