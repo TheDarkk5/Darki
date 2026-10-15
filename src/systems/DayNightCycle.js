@@ -35,52 +35,64 @@ export class DayNightCycle {
         this.updateLighting();
     }
 
-    updateLighting() {
-        // Midi = soleil au plus haut
-        const angle = (this.time - 0.25) * Math.PI * 2;
 
-const sunHeight = Math.cos(angle);
-        this.sun.position.set(
-            Math.cos(angle) * 100,
-            sunHeight * 100,
-            30
-        );
+updateLighting() {
+    // 00:00 = minuit
+    // 06:00 = lever du soleil
+    // 12:00 = midi
+    // 18:00 = coucher du soleil
 
-        // Luminosité du soleil selon sa hauteur
-        const daylight = THREE.MathUtils.smoothstep(
-            sunHeight,
-            -0.12,
-            0.25
-        );
-this.sun.intensity = 2.5 * daylight;
+    const angle = this.time * Math.PI * 2;
 
-this.ambientLight.intensity =
-    0.35 + daylight * 0.65;
+    // Soleil au plus haut à midi
+    const sunHeight = -Math.cos(angle);
 
-        // Couleur du ciel
-        this.skyColor.copy(this.nightSky);
-        this.skyColor.lerp(this.daySky, daylight);
+    // Position du soleil
+    this.sun.position.set(
+        -Math.sin(angle) * 100,
+        sunHeight * 100,
+        30
+    );
 
-        // Teinte orange près de l'horizon
-        const sunset = Math.max(
-            0,
-            1 - Math.abs(sunHeight) / 0.25
-        );
+    // Luminosité progressive
+    const daylight = THREE.MathUtils.smoothstep(
+        sunHeight,
+        -0.1,
+        0.25
+    );
 
-        this.skyColor.lerp(
-            this.sunsetSky,
-            sunset * 0.65
-        );
+    // Soleil
+    this.sun.intensity = 2.5 * daylight;
 
-        this.scene.background.copy(this.skyColor);
+    // Lumière ambiante
+    this.ambientLight.intensity =
+        0.35 + daylight * 0.65;
 
-        // Ajuster la couleur de la lumière
-        this.sun.color.set(0xffffff);
-        this.sun.color.lerp(
-            new THREE.Color(0xffb36b),
-            sunset * 0.6
-        );
-    }
+    // Couleur du ciel
+    this.skyColor.copy(this.nightSky);
+    this.skyColor.lerp(this.daySky, daylight);
+
+    // Lever et coucher du soleil
+    const sunset = Math.max(
+        0,
+        1 - Math.abs(sunHeight) / 0.25
+    );
+
+    this.skyColor.lerp(
+        this.sunsetSky,
+        sunset * 0.65
+    );
+
+    this.scene.background.copy(this.skyColor);
+
+    // Couleur du soleil
+    this.sun.color.set(0xffffff);
+    this.sun.color.lerp(
+        new THREE.Color(0xffb36b),
+        sunset * 0.6
+    );
+}
+
 
     getTimeString() {
         const totalMinutes = Math.floor(this.time * 1440);
