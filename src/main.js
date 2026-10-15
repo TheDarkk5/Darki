@@ -460,7 +460,7 @@ function animate() {
         0.1
     );
     // Cycle jour / nuit
-    //dayNightCycle.update(deltaTime);
+    dayNightCycle.update(deltaTime);
 
     // Charger les chunks même depuis le menu principal
     world.update(camera.position);
