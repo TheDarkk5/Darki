@@ -79,31 +79,21 @@ document
 // LUMIERE AMBIANTE
 // ==========================================
 
-const ambientLight =
-    new THREE.AmbientLight(
-        0xffffff,
-        0.7
-    );
-
+const ambientLight = new THREE.AmbientLight(
+    0xffffff,
+    1
+);
 scene.add(ambientLight);
-
 
 // ==========================================
 // SOLEIL
 // ==========================================
 
-const sun =
-    new THREE.DirectionalLight(
-        0xffffff,
-        2
-    );
-
-sun.position.set(
-    20,
-    30,
-    20
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    2.5
 );
-
+sun.position.set(100, 100, 50);
 scene.add(sun);
 
 const dayNightCycle = new DayNightCycle(
@@ -111,7 +101,6 @@ const dayNightCycle = new DayNightCycle(
     sun,
     ambientLight
 );
-dayNightCycle.setTime(12);
 // ==========================================
 // MONDE
 // ==========================================
