@@ -111,7 +111,7 @@ const dayNightCycle = new DayNightCycle(
     sun,
     ambientLight
 );
-
+dayNightCycle.setTime(12);
 // ==========================================
 // MONDE
 // ==========================================
