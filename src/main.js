@@ -104,11 +104,7 @@ scene.add(sun);
 const world =
     new World(scene);
 
-const dayNightCycle = new DayNightCycle(
-    scene,
-    sun,
-    ambientLight
-);
+
 // ==========================================
 // RESIZE
 // ==========================================
@@ -445,6 +441,11 @@ function updateDebugMenu(fps) {
         `Biome : ${biomeNames[biome] ?? biome}`;
 }
 
+const dayNightCycle = new DayNightCycle(
+    scene,
+    sun,
+    ambientLight
+);
 // ==========================================
 // GAME LOOP
 // ==========================================
