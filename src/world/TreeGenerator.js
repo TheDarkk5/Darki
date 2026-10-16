@@ -37,7 +37,6 @@ export class TreeGenerator {
         if (x !== treeX || z !== treeZ) return null;
 
         const biome = this.generator.biomes.getBiome(x, z);
-
         // Générer des arbres uniquement dans les forêts
         if (biome !== BIOME.FOREST) {
             return null;
