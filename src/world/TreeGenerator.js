@@ -37,12 +37,14 @@ export class TreeGenerator {
         if (x !== treeX || z !== treeZ) return null;
 
         const biome = this.generator.biomes.getBiome(x, z);
-        if (biome !== "FOREST" && biome !== "PLAINS") {
+
+        // Générer des arbres uniquement dans les forêts
+        if (biome !== BIOME.FOREST) {
             return null;
         }
 
         // Probabilité d'un arbre par cellule, avec le même tirage déterministe.
-        const density = biome === "FOREST" ? 0.8 : 0.25;
+        const density = biome === BIOME.FOREST ? 0.8 : 0.25;
         if (this.random(cellX + 2000, cellZ) > density) {
             return null;
         }
