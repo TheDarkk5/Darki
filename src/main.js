@@ -13,6 +13,7 @@ import { MusicSystem } from "./systems/MusicSystem.js";
 import { CraftingTable } from "./ui/CraftingTable.js";
 import { BIOME } from "./world/BiomeGenerator.js";
 import { DayNightCycle } from "./systems/DayNightCycle.js";
+import { SkySystem } from "./systems/SkySystem.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -446,6 +447,8 @@ const dayNightCycle = new DayNightCycle(
     sun,
     ambientLight
 );
+
+const skySystem = new SkySystem(scene, camera);
 // ==========================================
 // GAME LOOP
 // ==========================================
@@ -462,6 +465,9 @@ function animate() {
     );
     // Cycle jour / nuit
     dayNightCycle.update(deltaTime);
+
+    // Soleil, lune et étoiles
+    skySystem.update(dayNightCycle.time);
 
     // Charger les chunks même depuis le menu principal
     world.update(camera.position);
