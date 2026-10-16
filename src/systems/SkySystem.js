@@ -64,23 +64,25 @@ createCelestialBody(type, size) {
     texture.minFilter = THREE.NearestFilter;
     texture.colorSpace = THREE.SRGBColorSpace;
 
-    const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        depthTest: false,
-        fog: false,
-        toneMapped: false
-    });
+const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    alphaTest: 0.1,
+    side: THREE.DoubleSide,
+
+    depthTest: true,
+    depthWrite: false,
+
+    fog: false,
+    toneMapped: false
+});
 
     const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(size, size),
         material
     );
 
-    mesh.renderOrder = -10;
-
+mesh.renderOrder = 10;
     return mesh;
 }
 
@@ -109,25 +111,27 @@ createCelestialBody(type, size) {
             )
         );
 
-        const material = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: 1.5,
-            sizeAttenuation: false,
-            transparent: true,
-            opacity: 0,
-            depthWrite: false,
-            depthTest: false,
-            fog: false,
-            toneMapped: false
-        });
+const material = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 1.5,
+    sizeAttenuation: false,
+
+    transparent: true,
+    opacity: 0,
+
+    depthTest: true,
+    depthWrite: false,
+
+    fog: false,
+    toneMapped: false
+});
 
         const stars = new THREE.Points(
             geometry,
             material
         );
 
-        stars.renderOrder = -10;
-
+stars.renderOrder = 10;
         return stars;
     }
 
