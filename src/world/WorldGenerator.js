@@ -33,50 +33,65 @@ constructor(seed) {
 
 getHeight(worldX, worldZ) {
 
-    // =========================
-    // GRANDES FORMES
-    // =========================
+    const biome = this.biomes.getBiome(worldX, worldZ);
 
-    const continental =
-        this.noise2D(
-            worldX * 0.008,
-            worldZ * 0.008
+    // ==========================================
+    // PLAINES - RELIEF DOUX
+    // ==========================================
+
+    if (biome === BIOME.PLAINS) {
+
+        const largeNoise = this.noise2D(
+            worldX * 0.006,
+            worldZ * 0.006
         );
 
-
-    // =========================
-    // COLLINES
-    // =========================
-
-    const hills =
-        this.noise2D(
+        const smallNoise = this.noise2D(
             worldX * 0.025,
             worldZ * 0.025
         );
 
-
-    // =========================
-    // PETITS DETAILS
-    // =========================
-
-    const details =
-        this.noise2D(
+        const details = this.noise2D(
             worldX * 0.08,
             worldZ * 0.08
         );
 
+        return Math.floor(
+            48 +
+            largeNoise * 3 +
+            smallNoise * 1.5 +
+            details * 0.5
+        );
+    }
 
-   const height =
-    48 +
-    continental * 18 +
-    hills * 9 +
-    details * 2.5;
+    // ==========================================
+    // AUTRES BIOMES - RELIEF ORIGINAL
+    // ==========================================
 
-    return Math.floor(
-        height
+    const continental = this.noise2D(
+        worldX * 0.008,
+        worldZ * 0.008
     );
 
+    const hills = this.noise2D(
+        worldX * 0.025,
+        worldZ * 0.025
+    );
+
+    const details = this.noise2D(
+        worldX * 0.08,
+        worldZ * 0.08
+    );
+
+    const height =
+        48 +
+        continental * 18 +
+        hills * 9 +
+        details * 2.5;
+
+    return Math.floor(height);
 }
+
 
 
     // ==========================================
