@@ -151,9 +151,8 @@ createCelestialBody(type, size) {
             0
         );
 
-   this.sun.quaternion.copy(this.camera.quaternion);
-    this.moon.quaternion.copy(this.camera.quaternion);
-
+this.sun.lookAt(this.group.position);
+this.moon.lookAt(this.group.position);
    // Orienter les astres vers la caméra
         this.sun.lookAt(0, 0, 0);
         this.moon.lookAt(0, 0, 0);
