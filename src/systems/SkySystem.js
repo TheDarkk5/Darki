@@ -12,17 +12,8 @@ export class SkySystem {
         // Distance visuelle des astres
         this.distance = 250;
 
-        // Soleil carré
-        this.sun = this.createCelestialBody(
-            0xffffcc,
-            22
-        );
-
-        // Lune carrée
-        this.moon = this.createCelestialBody(
-            0xdde6ff,
-            16
-        );
+this.sun = this.createCelestialBody("sun", 22);
+this.moon = this.createCelestialBody("moon", 16);
 
         // Étoiles
         this.stars = this.createStars(600);
@@ -32,26 +23,66 @@ export class SkySystem {
         this.group.add(this.stars);
     }
 
-    createCelestialBody(color, size) {
-        const geometry = new THREE.PlaneGeometry(
-            size,
-            size
-        );
+createCelestialBody(type, size) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
 
-        const material = new THREE.MeshBasicMaterial({
-            color,
-            side: THREE.DoubleSide,
-            depthWrite: false,
-            depthTest: false,
-            fog: false,
-            toneMapped: false
-        });
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.renderOrder = -10;
+    if (type === "sun") {
+        // Halo extérieur
+        ctx.fillStyle = "#ffdf65";
+        ctx.fillRect(1, 1, 14, 14);
 
-        return mesh;
+        // Surface du soleil
+        ctx.fillStyle = "#fff4a3";
+        ctx.fillRect(3, 3, 10, 10);
+
+        // Centre lumineux
+        ctx.fillStyle = "#fffbd9";
+        ctx.fillRect(5, 5, 6, 6);
+    } else {
+        // Lune
+        ctx.fillStyle = "#b9c4d8";
+        ctx.fillRect(1, 1, 14, 14);
+
+        ctx.fillStyle = "#e0e7f2";
+        ctx.fillRect(3, 3, 10, 10);
+
+        // Cratères
+        ctx.fillStyle = "#98a8c1";
+        ctx.fillRect(4, 5, 3, 3);
+        ctx.fillRect(10, 9, 3, 3);
+        ctx.fillRect(8, 3, 2, 2);
     }
+
+    const texture = new THREE.CanvasTexture(canvas);
+
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    texture.colorSpace = THREE.SRGBColorSpace;
+
+    const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        depthTest: false,
+        fog: false,
+        toneMapped: false
+    });
+
+    const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(size, size),
+        material
+    );
+
+    mesh.renderOrder = -10;
+
+    return mesh;
+}
 
     createStars(count) {
         const positions = [];
@@ -120,7 +151,10 @@ export class SkySystem {
             0
         );
 
-        // Orienter les astres vers la caméra
+   this.sun.quaternion.copy(this.camera.quaternion);
+    this.moon.quaternion.copy(this.camera.quaternion);
+
+   // Orienter les astres vers la caméra
         this.sun.lookAt(0, 0, 0);
         this.moon.lookAt(0, 0, 0);
 
