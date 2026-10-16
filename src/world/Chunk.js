@@ -49,42 +49,40 @@ export class Chunk {
         chunkZ
     ) {
 
-        this.scene = scene;
+    this.scene = scene;
 
-        this.world = world;
-        this.treeGenerator = new TreeGenerator(this.world.generator);
+    this.world = world;
+    this.treeGenerator = new TreeGenerator(this.world.generator);
 
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
-
-
-        // ==========================================
-        // DONNÉES DES BLOCS
-        // ==========================================
-
-        this.blocks =
-            new Uint8Array(
-                Chunk.SIZE *
-                Chunk.HEIGHT *
-                Chunk.SIZE
-            );
+    this.chunkX = chunkX;
+    this.chunkZ = chunkZ;
 
 
-        this.mesh = null;
+// ==========================================
+// DONNÉES DES BLOCS
+// ==========================================
+
+    this.blocks =
+        new Uint8Array(
+            Chunk.SIZE *
+            Chunk.HEIGHT *
+            Chunk.SIZE
+        );
 
 
-        // Génération des blocs
-        this.generate();
-
-    }
+    this.mesh = null;
 
 
+    // Génération des blocs
+    this.generate();
 
-    // ==========================================
-    // MATERIAL D'UNE FACE
-    // ==========================================
+}
 
-getMaterialIndex(blockId, normal) {
+// ==========================================
+// MATERIAL D'UNE FACE
+// ==========================================
+
+    getMaterialIndex(blockId, normal) {
 
     // HERBE
     if (blockId === BLOCK.GRASS.id) {
@@ -133,9 +131,10 @@ getMaterialIndex(blockId, normal) {
         return 15;
     }
 }
-    // ==========================================
-    // INDEX DU TABLEAU
-    // ==========================================
+
+// ==========================================
+// INDEX DU TABLEAU
+// ==========================================
 
     getIndex(
         x,
@@ -143,21 +142,19 @@ getMaterialIndex(blockId, normal) {
         z
     ) {
 
-        return (
-            x +
-            z * Chunk.SIZE +
-            y *
-            Chunk.SIZE *
-            Chunk.SIZE
-        );
+    return (
+        x +
+        z * Chunk.SIZE +
+        y *
+        Chunk.SIZE *
+        Chunk.SIZE
+    );
 
     }
 
-
-
-    // ==========================================
-    // RÉCUPÉRER UN BLOC
-    // ==========================================
+// ==========================================
+// RÉCUPÉRER UN BLOC
+// ==========================================
 
     getBlock(
         x,
@@ -180,7 +177,6 @@ getMaterialIndex(blockId, normal) {
 
         }
 
-
         return this.blocks[
             this.getIndex(
                 x,
@@ -191,11 +187,9 @@ getMaterialIndex(blockId, normal) {
 
     }
 
-
-
-    // ==========================================
-    // MODIFIER UN BLOC
-    // ==========================================
+// ==========================================
+// MODIFIER UN BLOC
+// ==========================================
 
     setBlock(
         x,
@@ -219,7 +213,6 @@ getMaterialIndex(blockId, normal) {
 
         }
 
-
         this.blocks[
             this.getIndex(
                 x,
@@ -230,11 +223,9 @@ getMaterialIndex(blockId, normal) {
 
     }
 
-
-
-    // ==========================================
-    // GÉNÉRATION DU CHUNK
-    // ==========================================
+// ==========================================
+// GÉNÉRATION DU CHUNK
+// ==========================================
 
  generate() {
     for (let x = 0; x < Chunk.SIZE; x++) {
@@ -268,14 +259,11 @@ getMaterialIndex(blockId, normal) {
     }
 }
 
-
-
     // ==========================================
     // CONSTRUIRE LE MESH
     // ==========================================
 
     buildMesh() {
-
 
         // ======================================
         // SUPPRIMER L'ANCIEN MESH
@@ -289,17 +277,13 @@ getMaterialIndex(blockId, normal) {
                 this.mesh
             );
 
-
             this.mesh
                 .geometry
                 .dispose();
 
-
             this.mesh = null;
 
         }
-
-
 
         // ======================================
         // BUFFER DATA
@@ -312,13 +296,11 @@ getMaterialIndex(blockId, normal) {
     indices: []
 }));
 
-
         // ======================================
         // DÉFINITION DES 6 FACES
         // ======================================
 
         const faces = [
-
 
             // ==================================
             // DROITE +X
@@ -352,8 +334,6 @@ getMaterialIndex(blockId, normal) {
 
             },
 
-
-
             // ==================================
             // GAUCHE -X
             // ==================================
@@ -385,8 +365,6 @@ getMaterialIndex(blockId, normal) {
                 ]
 
             },
-
-
 
             // ==================================
             // HAUT +Y
@@ -420,8 +398,6 @@ getMaterialIndex(blockId, normal) {
 
             },
 
-
-
             // ==================================
             // BAS -Y
             // ==================================
@@ -454,8 +430,6 @@ getMaterialIndex(blockId, normal) {
 
             },
 
-
-
             // ==================================
             // DEVANT +Z
             // ==================================
@@ -487,8 +461,6 @@ getMaterialIndex(blockId, normal) {
                 ]
 
             },
-
-
 
             // ==================================
             // DERRIÈRE -Z
@@ -524,8 +496,6 @@ getMaterialIndex(blockId, normal) {
 
         ];
 
-
-
         // ======================================
         // PARCOURIR TOUS LES BLOCS
         // ======================================
@@ -547,7 +517,6 @@ getMaterialIndex(blockId, normal) {
                     z < Chunk.SIZE;
                     z++
                 ) {
-
 
                     // ==================================
                     // BLOC ACTUEL
@@ -571,8 +540,6 @@ getMaterialIndex(blockId, normal) {
 
                     }
 
-
-
                     // ==================================
                     // POSITION MONDIALE
                     // ==================================
@@ -588,8 +555,6 @@ getMaterialIndex(blockId, normal) {
                         Chunk.SIZE +
                         z;
 
-
-
                     // ==================================
                     // PARCOURIR LES 6 FACES
                     // ==================================
@@ -599,19 +564,15 @@ getMaterialIndex(blockId, normal) {
                         of faces
                     ) {
 
-
                         const [
                             dx,
                             dy,
                             dz
                         ] = face.direction;
 
-
-
                         // ==============================
                         // BLOC VOISIN
                         // ==============================
-
 
 const neighborX = x + dx;
 const neighborY = y + dy;
@@ -662,39 +623,37 @@ else {
     continue;
 }
 
-                        // ==============================
-                        // MATERIAL DE LA FACE
-                        // ==============================
+// ==============================
+// MATERIAL DE LA FACE
+// ==============================
 
-                        const materialIndex =
-                            this.getMaterialIndex(
-                                block,
-                                face.normal
-                            );
+const materialIndex =
+this.getMaterialIndex(
+    block,
+    face.normal
+    );
 
-                            const buffer = materialBuffers[materialIndex];
-                            const vertexIndex = buffer.positions.length / 3;
+const buffer = materialBuffers[materialIndex];
+const vertexIndex = buffer.positions.length / 3;
 
-                        // ==============================
-                        // SOMMETS
-                        // ==============================
+// ==============================
+// SOMMETS
+// ==============================
 
-                        for (
-                            const corner
-                            of face.corners
-                        ) {
+for (
+    const corner
+    of face.corners
+) {
 
-                    buffer.positions.push(
-                        x + corner[0],
-                        y + corner[1],
-                        z + corner[2]
+buffer.positions.push(
+    x + corner[0],
+    y + corner[1],
+    z + corner[2]
                     );
 
                     buffer.normals.push(...face.normal);
 
                         }
-
-
 
                         // ==============================
                         // UV
@@ -726,8 +685,6 @@ buffer.indices.push(
             }
 
         }
-
-
 
         // ======================================
         // CRÉATION BUFFER GEOMETRY
@@ -796,8 +753,6 @@ geometry.setIndex(indices);
 
         geometry.computeBoundingSphere();
 
-
-
         // ======================================
         // CRÉER LE MESH
         // ======================================
@@ -810,7 +765,6 @@ geometry.setIndex(indices);
                 CHUNK_MATERIALS
 
             );
-
 
         // ======================================
         // POSITION DU CHUNK
@@ -828,16 +782,12 @@ geometry.setIndex(indices);
 
         );
 
-
-
         // ======================================
         // RÉFÉRENCE DU CHUNK
         // ======================================
 
         this.mesh.userData.chunk =
             this;
-
-
 
         // ======================================
         // AJOUT À LA SCÈNE

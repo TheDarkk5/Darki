@@ -96,11 +96,7 @@ const sun = new THREE.DirectionalLight(
 sun.position.set(100, 100, 50);
 scene.add(sun);
 
-const dayNightCycle = new DayNightCycle(
-    scene,
-    sun,
-    ambientLight
-);
+
 // ==========================================
 // MONDE
 // ==========================================
@@ -108,7 +104,11 @@ const dayNightCycle = new DayNightCycle(
 const world =
     new World(scene);
 
-
+const dayNightCycle = new DayNightCycle(
+    scene,
+    sun,
+    ambientLight
+);
 // ==========================================
 // RESIZE
 // ==========================================
