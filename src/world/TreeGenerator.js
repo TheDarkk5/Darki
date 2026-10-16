@@ -43,7 +43,7 @@ export class TreeGenerator {
         }
 
         // Probabilité d'un arbre par cellule, avec le même tirage déterministe.
-        const density = biome === "FOREST" ? 0.8 : 0.25;
+        const density = biome === "FOREST" ? 0.5;
         if (this.random(cellX + 2000, cellZ) > density) {
             return null;
         }
