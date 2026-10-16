@@ -17,24 +17,24 @@ function loadTexture(path) {
 // TEXTURES
 // ================================
 
-const grassTop = loadTexture("/textures/grass_top.png");
-const grassSide = loadTexture("/textures/grass_side.png");
-const dirt = loadTexture("/textures/dirt.png");
-const stone = loadTexture("/textures/stone.png");
+const grassTop = loadTexture("//textures/blocks/grass_top.png");
+const grassSide = loadTexture("//textures/blocks/grass_side.png");
+const dirt = loadTexture("//textures/blocks/dirt.png");
+const stone = loadTexture("//textures/blocks/stone.png");
 
-const oakTop = loadTexture("/textures/oak_log_top.png");
-const oakSide = loadTexture("/textures/oak_log.png");
-const oakPlanks = loadTexture("/textures/oak_planks.png");
+const oakTop = loadTexture("//textures/blocks/oak_log_top.png");
+const oakSide = loadTexture("//textures/blocks/oak_log.png");
+const oakPlanks = loadTexture("//textures/blocks/oak_planks.png");
 
 // Feuilles avec pixels transparents
-const oakLeaves = loadTexture("/textures/oak_leaves.png");
+const oakLeaves = loadTexture("//textures/blocks/oak_leaves.png");
 
-const sand = loadTexture("/textures/sand.png");
-const snow = loadTexture("/textures/snow.png");
+const sand = loadTexture("//textures/blocks/sand.png");
+const snow = loadTexture("//textures/blocks/snow.png");
 
-const craftingTableFront = loadTexture("/textures/crafting_table_front.png");
-const craftingTableSide = loadTexture("/textures/crafting_table_side.png");
-const craftingTableTop = loadTexture("/textures/crafting_table_top.png");
+const craftingTableFront = loadTexture("//textures/blocks/crafting_table_front.png");
+const craftingTableSide = loadTexture("//textures/blocks/crafting_table_side.png");
+const craftingTableTop = loadTexture("//textures/blocks/crafting_table_top.png");
 // ================================
 // MATÉRIAUX
 // ================================
