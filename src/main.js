@@ -441,7 +441,6 @@ function updateDebugMenu(fps) {
     debugBiome.textContent =
         `Biome : ${biomeNames[biome] ?? biome}`;
 
-    const stats = world.generator.getHeightCacheStats();
 
 }
 
