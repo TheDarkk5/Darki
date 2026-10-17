@@ -202,7 +202,7 @@ clearAllHeightCache() {
     this.heightCache.clear();
 }
 
-ggetHeightCacheStats() {
+getHeightCacheStats() {
     return {
         chunks: this.heightCache.size,
         maxChunks: this.maxCachedChunks,
