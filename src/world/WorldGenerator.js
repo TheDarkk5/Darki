@@ -129,6 +129,29 @@ calculateHeight(worldX, worldZ) {
 }
 
 
+generateHeightmap(chunkX, chunkZ) {
+    const size = this.chunkSize;
+
+    const heightmap = new Int16Array(size * size);
+
+    for (let localZ = 0; localZ < size; localZ++) {
+        for (let localX = 0; localX < size; localX++) {
+
+            const worldX = chunkX * size + localX;
+            const worldZ = chunkZ * size + localZ;
+
+            const index = localX + localZ * size;
+
+            heightmap[index] = this.calculateHeight(
+                worldX,
+                worldZ
+            );
+        }
+    }
+
+    return heightmap;
+}
+
 getHeight(worldX, worldZ) {
     worldX = Math.floor(worldX);
     worldZ = Math.floor(worldZ);
@@ -140,42 +163,34 @@ getHeight(worldX, worldZ) {
 
     const key = `${chunkX},${chunkZ}`;
 
-    // Récupérer le cache du chunk
-    let cache = this.heightCache.get(key);
+    let heightmap = this.heightCache.get(key);
 
-    if (!cache) {
-        cache = new Float32Array(size * size);
-        cache.fill(NaN);
+    if (!heightmap) {
+        heightmap = this.generateHeightmap(chunkX, chunkZ);
 
-        // Limiter la mémoire utilisée
-        if (this.heightCache.size >= this.maxCachedChunks) {
+        this.heightCache.set(key, heightmap);
+
+        // Limite du cache avec éviction LRU
+        if (this.heightCache.size > this.maxCachedChunks) {
             const oldestKey =
                 this.heightCache.keys().next().value;
 
             this.heightCache.delete(oldestKey);
         }
-
-        this.heightCache.set(key, cache);
+    } else {
+        // Mettre le chunk récemment utilisé à la fin
+        this.heightCache.delete(key);
+        this.heightCache.set(key, heightmap);
     }
 
-    // Coordonnées locales, compatibles avec les négatifs
     const localX = worldX - chunkX * size;
     const localZ = worldZ - chunkZ * size;
 
     const index = localX + localZ * size;
 
-    // Hauteur déjà calculée
-    if (!Number.isNaN(cache[index])) {
-        return cache[index];
-    }
-
-    // Calculer une seule fois
-    const height = this.calculateHeight(worldX, worldZ);
-
-    cache[index] = height;
-
-    return height;
+    return heightmap[index];
 }
+
 
 // Supprimer le cache d'un chunk
 clearHeightCache(chunkX, chunkZ) {
@@ -187,7 +202,16 @@ clearAllHeightCache() {
     this.heightCache.clear();
 }
 
-
+getHeightCacheStats() {
+    return {
+        chunks: this.heightCache.size,
+        maxChunks: this.maxCachedChunks,
+        columns: this.heightCache.size * 256,
+        memoryKB: (
+            this.heightCache.size *
+            256 *
+            Int16Array.BYTES_PER_ELEMENT / 1024
+        ).toFixed(1)
 
     // ==========================================
     // TYPE DE BLOC
