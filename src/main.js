@@ -441,7 +441,11 @@ function updateDebugMenu(fps) {
     debugBiome.textContent =
         `Biome : ${biomeNames[biome] ?? biome}`;
 
+    const stats = world.generator.getHeightCacheStats();
 
+    console.log(`Chunks en cache : ${stats.chunks}`);
+    console.log(`Colonnes en cache : ${stats.columns}`);
+    console.log(`Mémoire : ${stats.memoryKB} Ko`);
 }
 
 const dayNightCycle = new DayNightCycle(

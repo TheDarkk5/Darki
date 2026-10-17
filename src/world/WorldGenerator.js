@@ -202,7 +202,7 @@ clearAllHeightCache() {
     this.heightCache.clear();
 }
 
-getHeightCacheStats() {
+ggetHeightCacheStats() {
     return {
         chunks: this.heightCache.size,
         maxChunks: this.maxCachedChunks,
@@ -212,7 +212,8 @@ getHeightCacheStats() {
             256 *
             Int16Array.BYTES_PER_ELEMENT / 1024
         ).toFixed(1)
-
+    };
+}
     // ==========================================
     // TYPE DE BLOC
     // ==========================================
