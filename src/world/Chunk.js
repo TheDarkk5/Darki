@@ -34,273 +34,7 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.CRAFTING_TABLE[4], // 17 - Devant
 ];
 
-
-
-
-export class Chunk {
-
-    static SIZE = 16;
-    static HEIGHT = 128;
-
-    constructor(
-        scene,
-        world,
-        chunkX,
-        chunkZ
-    ) {
-
-    this.scene = scene;
-
-    this.world = world;
-    this.treeGenerator = new TreeGenerator(this.world.generator);
-
-    this.chunkX = chunkX;
-    this.chunkZ = chunkZ;
-
-
-// ==========================================
-// DONNÉES DES BLOCS
-// ==========================================
-
-    this.blocks =
-        new Uint8Array(
-            Chunk.SIZE *
-            Chunk.HEIGHT *
-            Chunk.SIZE
-        );
-
-
-    this.mesh = null;
-
-
-    // Génération des blocs
-    this.generate();
-
-}
-
-// ==========================================
-// MATERIAL D'UNE FACE
-// ==========================================
-
-    getMaterialIndex(blockId, normal) {
-
-    // HERBE
-    if (blockId === BLOCK.GRASS.id) {
-        if (normal[1] === 1) return 0;
-        if (normal[1] === -1) return 2;
-        return 1;
-    }
-
-    // TERRE
-    if (blockId === BLOCK.DIRT.id) {
-        return 2;
-    }
-
-    // PIERRE
-    if (blockId === BLOCK.STONE.id) {
-        return 3;
-    }
-
-    // BOIS
-    if (blockId === BLOCK.OAK_LOG.id) {
-        // Dessus et dessous
-        if (normal[1] !== 0) return 4;
-
-        // Côtés
-        return 5;
-    }
-
- if (blockId === BLOCK.OAK_PLANKS.id) {
-        return 6;
-    }
-
-    if (blockId === BLOCK.OAK_LEAVES.id) {
-        return 7;
-    }
-
-    if (blockId === BLOCK.SAND.id) return 8;
-    if (blockId === BLOCK.SNOW.id) return 9;
-    if (blockId === BLOCK.COAL_ORE.id) return 10;
-    if (blockId === BLOCK.IRON_ORE.id) return 11;
-    if (blockId === BLOCK.COPPER_ORE.id) return 12;
-    if (blockId === BLOCK.GOLD_ORE.id) return 13;
-    if (blockId === BLOCK.DIAMOND_ORE.id) return 14;
-    if (blockId === BLOCK.CRAFTING_TABLE.id) {
-        if (normal[1] === 1) return 16;
-        if (normal[2] === 1) return 17;
-        return 15;
-    }
-}
-
-// ==========================================
-// INDEX DU TABLEAU
-// ==========================================
-
-    getIndex(
-        x,
-        y,
-        z
-    ) {
-
-    return (
-        x +
-        z * Chunk.SIZE +
-        y *
-        Chunk.SIZE *
-        Chunk.SIZE
-    );
-
-    }
-
-// ==========================================
-// RÉCUPÉRER UN BLOC
-// ==========================================
-
-    getBlock(
-        x,
-        y,
-        z
-    ) {
-
-        if (
-            x < 0 ||
-            x >= Chunk.SIZE ||
-
-            y < 0 ||
-            y >= Chunk.HEIGHT ||
-
-            z < 0 ||
-            z >= Chunk.SIZE
-        ) {
-
-            return BLOCK.AIR.id;
-
-        }
-
-        return this.blocks[
-            this.getIndex(
-                x,
-                y,
-                z
-            )
-        ];
-
-    }
-
-// ==========================================
-// MODIFIER UN BLOC
-// ==========================================
-
-    setBlock(
-        x,
-        y,
-        z,
-        id
-    ) {
-
-        if (
-            x < 0 ||
-            x >= Chunk.SIZE ||
-
-            y < 0 ||
-            y >= Chunk.HEIGHT ||
-
-            z < 0 ||
-            z >= Chunk.SIZE
-        ) {
-
-            return;
-
-        }
-
-        this.blocks[
-            this.getIndex(
-                x,
-                y,
-                z
-            )
-        ] = id;
-
-    }
-
-// ==========================================
-// GÉNÉRATION DU CHUNK
-// ==========================================
-
- generate() {
-    for (let x = 0; x < Chunk.SIZE; x++) {
-        for (let z = 0; z < Chunk.SIZE; z++) {
-
-            const worldX = this.chunkX * Chunk.SIZE + x;
-            const worldZ = this.chunkZ * Chunk.SIZE + z;
-
-            for (let y = 0; y < Chunk.HEIGHT; y++) {
-
-                const terrainBlock = this.world.generator.getBlock(
-                    worldX,
-                    y,
-                    worldZ
-                );
-
-                let blockId = terrainBlock;
-
-                // Générer les arbres uniquement dans l'air
-                if (terrainBlock === BLOCK.AIR.id) {
-                    blockId = this.treeGenerator.getBlock(
-                        worldX,
-                        y,
-                        worldZ
-                    );
-                }
-
-                this.setBlock(x, y, z, blockId);
-            }
-        }
-    }
-}
-
-    // ==========================================
-    // CONSTRUIRE LE MESH
-    // ==========================================
-
-    buildMesh() {
-
-        // ======================================
-        // SUPPRIMER L'ANCIEN MESH
-        // ======================================
-
-        if (
-            this.mesh
-        ) {
-
-            this.scene.remove(
-                this.mesh
-            );
-
-            this.mesh
-                .geometry
-                .dispose();
-
-            this.mesh = null;
-
-        }
-
-        // ======================================
-        // BUFFER DATA
-        // ======================================
-
- const materialBuffers = CHUNK_MATERIALS.map(() => ({
-    positions: [],
-    normals: [],
-    uvs: [],
-    indices: []
-}));
-
-        // ======================================
-        // DÉFINITION DES 6 FACES
-        // ======================================
-
-        const faces = [
+const CHUNK_FACES = [
 
             // ==================================
             // DROITE +X
@@ -494,7 +228,316 @@ export class Chunk {
 
             }
 
+];
+
+
+
+export class Chunk {
+
+    static SIZE = 16;
+    static HEIGHT = 128;
+
+    constructor(
+        scene,
+        world,
+        chunkX,
+        chunkZ
+    ) {
+
+    this.scene = scene;
+
+    this.world = world;
+    this.treeGenerator = new TreeGenerator(this.world.generator);
+
+    this.chunkX = chunkX;
+    this.chunkZ = chunkZ;
+
+
+// ==========================================
+// DONNÉES DES BLOCS
+// ==========================================
+
+    this.blocks =
+        new Uint8Array(
+            Chunk.SIZE *
+            Chunk.HEIGHT *
+            Chunk.SIZE
+        );
+
+
+    this.mesh = null;
+
+
+    // Génération des blocs
+    this.generate();
+
+}
+
+// ==========================================
+// MATERIAL D'UNE FACE
+// ==========================================
+
+    getMaterialIndex(blockId, normal) {
+
+    // HERBE
+    if (blockId === BLOCK.GRASS.id) {
+        if (normal[1] === 1) return 0;
+        if (normal[1] === -1) return 2;
+        return 1;
+    }
+
+    // TERRE
+    if (blockId === BLOCK.DIRT.id) {
+        return 2;
+    }
+
+    // PIERRE
+    if (blockId === BLOCK.STONE.id) {
+        return 3;
+    }
+
+    // BOIS
+    if (blockId === BLOCK.OAK_LOG.id) {
+        // Dessus et dessous
+        if (normal[1] !== 0) return 4;
+
+        // Côtés
+        return 5;
+    }
+
+ if (blockId === BLOCK.OAK_PLANKS.id) {
+        return 6;
+    }
+
+    if (blockId === BLOCK.OAK_LEAVES.id) {
+        return 7;
+    }
+
+    if (blockId === BLOCK.SAND.id) return 8;
+    if (blockId === BLOCK.SNOW.id) return 9;
+    if (blockId === BLOCK.COAL_ORE.id) return 10;
+    if (blockId === BLOCK.IRON_ORE.id) return 11;
+    if (blockId === BLOCK.COPPER_ORE.id) return 12;
+    if (blockId === BLOCK.GOLD_ORE.id) return 13;
+    if (blockId === BLOCK.DIAMOND_ORE.id) return 14;
+    if (blockId === BLOCK.CRAFTING_TABLE.id) {
+        if (normal[1] === 1) return 16;
+        if (normal[2] === 1) return 17;
+        return 15;
+    }
+}
+
+// ==========================================
+// INDEX DU TABLEAU
+// ==========================================
+
+    getIndex(
+        x,
+        y,
+        z
+    ) {
+
+    return (
+        x +
+        z * Chunk.SIZE +
+        y *
+        Chunk.SIZE *
+        Chunk.SIZE
+    );
+
+    }
+
+// ==========================================
+// RÉCUPÉRER UN BLOC
+// ==========================================
+
+    getBlock(
+        x,
+        y,
+        z
+    ) {
+
+        if (
+            x < 0 ||
+            x >= Chunk.SIZE ||
+
+            y < 0 ||
+            y >= Chunk.HEIGHT ||
+
+            z < 0 ||
+            z >= Chunk.SIZE
+        ) {
+
+            return BLOCK.AIR.id;
+
+        }
+
+        return this.blocks[
+            this.getIndex(
+                x,
+                y,
+                z
+            )
         ];
+
+    }
+
+// ==========================================
+// MODIFIER UN BLOC
+// ==========================================
+
+    setBlock(
+        x,
+        y,
+        z,
+        id
+    ) {
+
+        if (
+            x < 0 ||
+            x >= Chunk.SIZE ||
+
+            y < 0 ||
+            y >= Chunk.HEIGHT ||
+
+            z < 0 ||
+            z >= Chunk.SIZE
+        ) {
+
+            return;
+
+        }
+
+        this.blocks[
+            this.getIndex(
+                x,
+                y,
+                z
+            )
+        ] = id;
+
+    }
+
+    getChunkHeightmap(chunkX, chunkZ) {
+    const key = `${chunkX},${chunkZ}`;
+
+    let heightmap = this.heightCache.get(key);
+
+    if (!heightmap) {
+        heightmap = this.generateHeightmap(chunkX, chunkZ);
+    } else {
+        this.heightCache.delete(key);
+    }
+
+    this.heightCache.set(key, heightmap);
+
+    if (this.heightCache.size > this.maxCachedChunks) {
+        const oldestKey = this.heightCache.keys().next().value;
+        this.heightCache.delete(oldestKey);
+    }
+
+    return heightmap;
+}
+
+// ==========================================
+// GÉNÉRATION DU CHUNK
+// ==========================================
+
+
+generate() {
+    const size = Chunk.SIZE;
+    const height = Chunk.HEIGHT;
+
+    const generator = this.world.generator;
+
+    // Récupérer la heightmap complète du chunk
+    const heightmap = generator.getChunkHeightmap(
+        this.chunkX,
+        this.chunkZ
+    );
+
+    for (let z = 0; z < size; z++) {
+        for (let x = 0; x < size; x++) {
+
+            const worldX = this.chunkX * size + x;
+            const worldZ = this.chunkZ * size + z;
+
+            const terrainHeight = heightmap[x + z * size];
+
+            // Stocker directement les blocs
+            for (let y = 0; y < height; y++) {
+
+                let blockId = BLOCK.AIR.id;
+
+                if (y <= terrainHeight) {
+                    blockId = generator.getBlock(
+                        worldX,
+                        y,
+                        worldZ
+                    );
+                } else {
+                    // Les arbres peuvent dépasser la surface.
+                    // On conserve leur génération complète
+                    // pour les frontières et les terrains voisins.
+                    blockId = this.treeGenerator.getBlock(
+                        worldX,
+                        y,
+                        worldZ
+                    );
+                }
+
+                const index =
+                    x +
+                    z * size +
+                    y * size * size;
+
+                this.blocks[index] = blockId;
+            }
+        }
+    }
+}
+
+    // ==========================================
+    // CONSTRUIRE LE MESH
+    // ==========================================
+
+    buildMesh() {
+
+        // ======================================
+        // SUPPRIMER L'ANCIEN MESH
+        // ======================================
+
+        if (
+            this.mesh
+        ) {
+
+            this.scene.remove(
+                this.mesh
+            );
+
+            this.mesh
+                .geometry
+                .dispose();
+
+            this.mesh = null;
+
+        }
+
+        // ======================================
+        // BUFFER DATA
+        // ======================================
+
+ const materialBuffers = CHUNK_MATERIALS.map(() => ({
+    positions: [],
+    normals: [],
+    uvs: [],
+    indices: []
+}));
+
+        // ======================================
+        // DÉFINITION DES 6 FACES
+        // ======================================
+
 
         // ======================================
         // PARCOURIR TOUS LES BLOCS
@@ -559,10 +602,7 @@ export class Chunk {
                     // PARCOURIR LES 6 FACES
                     // ==================================
 
-                    for (
-                        const face
-                        of faces
-                    ) {
+for (const face of CHUNK_FACES) {
 
                         const [
                             dx,
@@ -590,11 +630,11 @@ if (
     neighborZ >= 0 &&
     neighborZ < Chunk.SIZE
 ) {
-    neighbor = this.getBlock(
-        neighborX,
-        neighborY,
-        neighborZ
-    );
+    neighbor = this.blocks[
+        neighborX +
+        neighborZ * Chunk.SIZE +
+        neighborY * Chunk.SIZE * Chunk.SIZE
+    ];
 } else {
     neighbor = this.world.getBlock(
         worldX + dx,
@@ -710,9 +750,17 @@ materialBuffers.forEach((buffer, materialIndex) => {
     const start = indices.length;
 
     // Ajouter les sommets
-    positions.push(...buffer.positions);
-    normals.push(...buffer.normals);
-    uvs.push(...buffer.uvs);
+    for (let i = 0; i < buffer.positions.length; i++) {
+        positions.push(buffer.positions[i]);
+    }
+
+    for (let i = 0; i < buffer.normals.length; i++) {
+        normals.push(buffer.normals[i]);
+    }
+
+    for (let i = 0; i < buffer.uvs.length; i++) {
+        uvs.push(buffer.uvs[i]);
+    }
 
     // Décaler les indices pour les nouveaux sommets
     for (const index of buffer.indices) {

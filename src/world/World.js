@@ -14,21 +14,27 @@ export class World {
         this.chunkQueue = [];
         this.queuedChunks = new Set();
         this.chunksPerFrame = 1;
+        // Budget de génération par frame, en millisecondes
+        this.chunkTimeBudget = 4;
 
-this.renderDistance = 3;
-this.unloadDistance = this.renderDistance + 2;
+        // Mesures de performance
+        this.lastChunkBuildMs = 0;
+        this.maxChunkBuildMs = 0;
 
-this.lastPlayerChunkX = null;
-this.lastPlayerChunkZ = null;
+        this.renderDistance = 3;
+        this.unloadDistance = this.renderDistance + 2;
 
-this.seed = Math.floor(Math.random() * 2147483647);
-console.log("🌍 Seed du monde :", this.seed);
+        this.lastPlayerChunkX = null;
+        this.lastPlayerChunkZ = null;
 
-this.generator = new WorldGenerator(this.seed);
-    
-        this.generateWorld();
+        this.seed = Math.floor(Math.random() * 2147483647);
+        console.log("🌍 Seed du monde :", this.seed);
 
-    }
+        this.generator = new WorldGenerator(this.seed);
+            
+                this.generateWorld();
+
+            }
 
 
     // ==========================================
@@ -553,6 +559,7 @@ queueChunk(chunkX, chunkZ) {
 }
 
 
+
 processChunkQueue(playerPosition) {
     const centerX = Math.floor(
         playerPosition.x / Chunk.SIZE
@@ -562,12 +569,22 @@ processChunkQueue(playerPosition) {
         playerPosition.z / Chunk.SIZE
     );
 
+    const frameStart = performance.now();
     let processed = 0;
 
     while (
         processed < this.chunksPerFrame &&
         this.chunkQueue.length > 0
     ) {
+        // Ne pas commencer un autre chunk
+        // si le budget de temps est déjà dépassé
+        if (
+            processed > 0 &&
+            performance.now() - frameStart >= this.chunkTimeBudget
+        ) {
+            break;
+        }
+
         const next = this.chunkQueue.shift();
 
         const key = this.getChunkKey(
@@ -577,7 +594,7 @@ processChunkQueue(playerPosition) {
 
         this.queuedChunks.delete(key);
 
-        // Ignorer les chunks devenus trop éloignés
+        // Ignorer les chunks trop éloignés
         if (
             Math.abs(next.chunkX - centerX) > this.renderDistance ||
             Math.abs(next.chunkZ - centerZ) > this.renderDistance
@@ -589,6 +606,8 @@ processChunkQueue(playerPosition) {
             continue;
         }
 
+        const start = performance.now();
+
         this.createChunk(next.chunkX, next.chunkZ);
 
         const chunk = this.chunks.get(key);
@@ -597,8 +616,17 @@ processChunkQueue(playerPosition) {
             chunk.buildMesh();
         }
 
+        const duration = performance.now() - start;
+
+        this.lastChunkBuildMs = duration;
+        this.maxChunkBuildMs = Math.max(
+            this.maxChunkBuildMs,
+            duration
+        );
+
         processed++;
     }
 }
+
 
 }

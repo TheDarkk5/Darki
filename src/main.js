@@ -65,10 +65,7 @@ renderer.setSize(
 );
 
 renderer.setPixelRatio(
-    Math.min(
-        window.devicePixelRatio,
-        2
-    )
+    Math.min(window.devicePixelRatio, 1.5)
 );
 
 document
@@ -440,16 +437,6 @@ function updateDebugMenu(fps) {
 
     debugBiome.textContent =
         `Biome : ${biomeNames[biome] ?? biome}`;
-
-    const debugBiome = document.getElementById("debug-biome");
-    const debugCache = document.getElementById("debug-cache");
-    const stats = world.generator.getHeightCacheStats();
-
-    if (debugCache) {
-        debugCache.textContent =
-            `Heightmap : ${stats.chunks}/${stats.maxChunks} chunks | ` +
-            `${stats.columns} colonnes | ${stats.memoryKB} Ko`;
-    }
 
 }
 
