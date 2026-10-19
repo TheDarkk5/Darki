@@ -152,6 +152,30 @@ generateHeightmap(chunkX, chunkZ) {
     return heightmap;
 }
 
+
+getChunkHeightmap(chunkX, chunkZ) {
+    const key = `${chunkX},${chunkZ}`;
+
+    let heightmap = this.heightCache.get(key);
+
+    if (!heightmap) {
+        heightmap = this.generateHeightmap(chunkX, chunkZ);
+    } else {
+        // Actualiser l'ordre du cache (LRU)
+        this.heightCache.delete(key);
+    }
+
+    this.heightCache.set(key, heightmap);
+
+    // Limiter la mémoire utilisée
+    if (this.heightCache.size > this.maxCachedChunks) {
+        const oldestKey = this.heightCache.keys().next().value;
+        this.heightCache.delete(oldestKey);
+    }
+
+    return heightmap;
+}
+
 getHeight(worldX, worldZ) {
     worldX = Math.floor(worldX);
     worldZ = Math.floor(worldZ);
@@ -161,35 +185,17 @@ getHeight(worldX, worldZ) {
     const chunkX = Math.floor(worldX / size);
     const chunkZ = Math.floor(worldZ / size);
 
-    const key = `${chunkX},${chunkZ}`;
-
-    let heightmap = this.heightCache.get(key);
-
-    if (!heightmap) {
-        heightmap = this.generateHeightmap(chunkX, chunkZ);
-
-        this.heightCache.set(key, heightmap);
-
-        // Limite du cache avec éviction LRU
-        if (this.heightCache.size > this.maxCachedChunks) {
-            const oldestKey =
-                this.heightCache.keys().next().value;
-
-            this.heightCache.delete(oldestKey);
-        }
-    } else {
-        // Mettre le chunk récemment utilisé à la fin
-        this.heightCache.delete(key);
-        this.heightCache.set(key, heightmap);
-    }
+    const heightmap = this.getChunkHeightmap(
+        chunkX,
+        chunkZ
+    );
 
     const localX = worldX - chunkX * size;
     const localZ = worldZ - chunkZ * size;
 
-    const index = localX + localZ * size;
-
-    return heightmap[index];
+    return heightmap[localX + localZ * size];
 }
+
 
 
 // Supprimer le cache d'un chunk
