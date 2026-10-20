@@ -750,11 +750,18 @@ for (
     of face.corners
 ) {
 
-buffer.positions.push(
-    x + corner[0],
-    y + corner[1],
-    z + corner[2]
-                    );
+    const isWater = block === BLOCK.WATER.id;
+
+    const waterOffset =
+        isWater && corner[1] === 1
+            ? -0.12
+            : 0;
+
+    buffer.positions.push(
+        x + corner[0],
+        y + corner[1] + waterOffset,
+        z + corner[2]
+    );
 
                     buffer.normals.push(...face.normal);
 
