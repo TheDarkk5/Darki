@@ -32,6 +32,7 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.CRAFTING_TABLE[0], // 15 - Côtés
     BLOCK_MATERIALS.CRAFTING_TABLE[2], // 16 - Dessus
     BLOCK_MATERIALS.CRAFTING_TABLE[4], // 17 - Devant
+    BLOCK_MATERIALS.WATER, // 18 - Eau
 ];
 
 const CHUNK_FACES = [
@@ -230,8 +231,6 @@ const CHUNK_FACES = [
 
 ];
 
-
-
 export class Chunk {
 
     static SIZE = 16;
@@ -325,6 +324,7 @@ export class Chunk {
         if (normal[2] === 1) return 17;
         return 15;
     }
+    if (blockId === BLOCK.WATER.id) return 18;
 }
 
 // ==========================================

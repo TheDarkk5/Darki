@@ -17,6 +17,7 @@ constructor(seed) {
     this.biomes = new BiomeGenerator(seed);
     this.ores = new OreGenerator(this.seed);
     this.caves = new CaveGenerator(seed);
+    this.seaLevel = 48;
     // Cache des hauteurs du terrain
     this.heightCache = new Map();
 
@@ -233,9 +234,11 @@ getBlock(x, y, z) {
     const height = this.getHeight(x, z);
 
     // Air au-dessus du terrain
-if (y > height) {
-    return BLOCK.AIR.id;
-}
+    if (y > height) {
+        return y <= this.seaLevel
+            ? BLOCK.WATER.id
+            : BLOCK.AIR.id;
+    }
 
     // Surface du biome
     if (y === height) {

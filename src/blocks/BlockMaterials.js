@@ -138,4 +138,13 @@ export const BLOCK_MATERIALS = {
         craftingTableFrontMaterial, // Côté avant
         craftingTableSideMaterial  // Côté arrière
     ],
+
+    WATER: new THREE.MeshLambertMaterial({
+    color: 0x3489db,
+    transparent: true,
+    opacity: 0.65,
+    depthWrite: false,
+    side: THREE.DoubleSide
+}),
+
 };

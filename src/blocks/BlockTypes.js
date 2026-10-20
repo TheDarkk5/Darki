@@ -117,7 +117,12 @@ export const BLOCK = {
         material: "CRAFTING_TABLE",
         texture: "/textures/blocks/crafting_table_front.png",
         solid: true
-    }
+    },
+
+    WATER: {
+    id: 15,
+    name: "Eau"
+},
 };
 
 export function getBlockById(id) {
