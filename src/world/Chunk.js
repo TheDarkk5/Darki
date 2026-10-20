@@ -691,8 +691,18 @@ const neighborIsLeaves = neighbor === BLOCK.OAK_LEAVES.id;
 let visible = false;
 
 if (isWater) {
-    // Ne jamais afficher les faces internes de l'eau
-    visible = neighbor === BLOCK.AIR.id;
+    if (face.normal[1] === 1) {
+        // Dessus : afficher uniquement si le bloc supérieur
+        // n'est pas de l'eau
+        visible = neighbor !== BLOCK.WATER.id &&
+                  neighbor === BLOCK.AIR.id;
+    } else if (face.normal[1] === -1) {
+        // Dessous : inutile pour le rendu normal
+        visible = false;
+    } else {
+        // Côtés : uniquement contre l'air
+        visible = neighbor === BLOCK.AIR.id;
+    }
 } else if (neighborIsWater) {
     // Garder les faces des blocs solides sous l'eau
     visible = true;
