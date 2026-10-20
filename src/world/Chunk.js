@@ -479,27 +479,6 @@ export class Chunk {
 
     }
 
-    getChunkHeightmap(chunkX, chunkZ) {
-    const key = `${chunkX},${chunkZ}`;
-
-    let heightmap = this.heightCache.get(key);
-
-    if (!heightmap) {
-        heightmap = this.generateHeightmap(chunkX, chunkZ);
-    } else {
-        this.heightCache.delete(key);
-    }
-
-    this.heightCache.set(key, heightmap);
-
-    if (this.heightCache.size > this.maxCachedChunks) {
-        const oldestKey = this.heightCache.keys().next().value;
-        this.heightCache.delete(oldestKey);
-    }
-
-    return heightmap;
-}
-
 // ==========================================
 // GÉNÉRATION DU CHUNK
 // ==========================================
@@ -712,11 +691,10 @@ const neighborIsLeaves = neighbor === BLOCK.OAK_LEAVES.id;
 let visible = false;
 
 if (isWater) {
-    // Eau contre air : visible
-    // Eau contre eau : cachée
+    // Ne jamais afficher les faces internes de l'eau
     visible = neighbor === BLOCK.AIR.id;
 } else if (neighborIsWater) {
-    // Blocs solides contre eau : face visible
+    // Garder les faces des blocs solides sous l'eau
     visible = true;
 } else if (neighbor === BLOCK.AIR.id) {
     visible = true;
@@ -727,7 +705,6 @@ if (isWater) {
 }
 
 if (!visible) continue;
-
 // ==============================
 // MATERIAL DE LA FACE
 // ==============================
@@ -752,10 +729,18 @@ for (
 
     const isWater = block === BLOCK.WATER.id;
 
-    const waterOffset =
-        isWater && corner[1] === 1
-            ? -0.12
-            : 0;
+const isSurfaceWater =
+    isWater &&
+    this.world.getBlock(
+        worldX,
+        y + 1,
+        worldZ
+    ) !== BLOCK.WATER.id;
+
+const waterOffset =
+    isSurfaceWater && corner[1] === 1
+        ? -0.12
+        : 0;
 
     buffer.positions.push(
         x + corner[0],
@@ -843,37 +828,6 @@ if (waterGeometry) {
 
     this.scene.add(this.waterMesh);
 }   
-        // ======================================
-        // POSITION DU CHUNK
-        // ======================================
-
-        this.mesh.position.set(
-
-            this.chunkX *
-            Chunk.SIZE,
-
-            0,
-
-            this.chunkZ *
-            Chunk.SIZE
-
-        );
-
-        // ======================================
-        // RÉFÉRENCE DU CHUNK
-        // ======================================
-
-        this.mesh.userData.chunk =
-            this;
-
-        // ======================================
-        // AJOUT À LA SCÈNE
-        // ======================================
-
-        this.scene.add(
-            this.mesh
-        );
-
     }
 
 unload() {

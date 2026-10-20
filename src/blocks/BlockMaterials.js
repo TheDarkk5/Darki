@@ -156,7 +156,7 @@ export const BLOCK_MATERIALS = {
 
 WATER: new THREE.MeshLambertMaterial({
     map: waterTexture,
-    color: 0x64b9e8,
+    color: 0x78c8ff,
     transparent: true,
     opacity: 0.88,
     depthWrite: false,
