@@ -14,6 +14,7 @@ import { CraftingTable } from "./ui/CraftingTable.js";
 import { BIOME } from "./world/BiomeGenerator.js";
 import { DayNightCycle } from "./systems/DayNightCycle.js";
 import { SkySystem } from "./systems/SkySystem.js";
+import { WaterAnimation } from "./systems/WaterAnimation.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -450,7 +451,7 @@ const skySystem = new SkySystem(scene, camera);
 // ==========================================
 // GAME LOOP
 // ==========================================
-
+const waterAnimation = new WaterAnimation();
 
 function animate() {
     requestAnimationFrame(animate);
@@ -466,7 +467,7 @@ function animate() {
 
     // Soleil, lune et étoiles
     skySystem.update(dayNightCycle.time);
-
+waterAnimation.update(deltaTime);
     // Charger les chunks même depuis le menu principal
     world.update(camera.position);
 

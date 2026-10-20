@@ -35,6 +35,66 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.WATER, // 18 - Eau
 ];
 
+function createChunkGeometry(materialBuffers, materialIndices) {
+    const geometry = new THREE.BufferGeometry();
+
+    const positions = [];
+    const normals = [];
+    const uvs = [];
+    const indices = [];
+
+    let vertexOffset = 0;
+
+    for (const materialIndex of materialIndices) {
+        const buffer = materialBuffers[materialIndex];
+
+        if (!buffer || buffer.indices.length === 0) continue;
+
+        const start = indices.length;
+
+        for (const value of buffer.positions) positions.push(value);
+        for (const value of buffer.normals) normals.push(value);
+        for (const value of buffer.uvs) uvs.push(value);
+
+        for (const index of buffer.indices) {
+            indices.push(index + vertexOffset);
+        }
+
+        geometry.addGroup(
+            start,
+            buffer.indices.length,
+            materialIndex
+        );
+
+        vertexOffset += buffer.positions.length / 3;
+    }
+
+    if (indices.length === 0) {
+        geometry.dispose();
+        return null;
+    }
+
+    geometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(positions, 3)
+    );
+
+    geometry.setAttribute(
+        "normal",
+        new THREE.Float32BufferAttribute(normals, 3)
+    );
+
+    geometry.setAttribute(
+        "uv",
+        new THREE.Float32BufferAttribute(uvs, 2)
+    );
+
+    geometry.setIndex(indices);
+    geometry.computeBoundingSphere();
+
+    return geometry;
+}
+
 const CHUNK_FACES = [
 
             // ==================================
@@ -265,6 +325,7 @@ export class Chunk {
 
 
     this.mesh = null;
+    this.waterMesh = null;
 
 
     // Génération des blocs
@@ -517,6 +578,11 @@ generate() {
 
         }
 
+if (this.waterMesh) {
+    this.scene.remove(this.waterMesh);
+    this.waterMesh.geometry.dispose();
+    this.waterMesh = null;
+}
         // ======================================
         // BUFFER DATA
         // ======================================
@@ -725,94 +791,51 @@ buffer.indices.push(
 
         }
 
-        // ======================================
-        // CRÉATION BUFFER GEOMETRY
-        // ======================================
+const waterMaterialIndex = CHUNK_MATERIALS.indexOf(
+    BLOCK_MATERIALS.WATER
+);
 
-const geometry = new THREE.BufferGeometry();
+const solidMaterialIndices = CHUNK_MATERIALS
+    .map((_, index) => index)
+    .filter(index => index !== waterMaterialIndex);
 
-// Tableaux finaux
-const positions = [];
-const normals = [];
-const uvs = [];
-const indices = [];
+const solidGeometry = createChunkGeometry(
+    materialBuffers,
+    solidMaterialIndices
+);
 
-let vertexOffset = 0;
+const waterGeometry = createChunkGeometry(
+    materialBuffers,
+    [waterMaterialIndex]
+);
 
-// Fusionner les faces par matériau
-materialBuffers.forEach((buffer, materialIndex) => {
-    if (buffer.indices.length === 0) {
-        return;
-    }
+const offsetX = this.chunkX * Chunk.SIZE;
+const offsetZ = this.chunkZ * Chunk.SIZE;
 
-    // Début du groupe dans le tableau des indices
-    const start = indices.length;
-
-    // Ajouter les sommets
-    for (let i = 0; i < buffer.positions.length; i++) {
-        positions.push(buffer.positions[i]);
-    }
-
-    for (let i = 0; i < buffer.normals.length; i++) {
-        normals.push(buffer.normals[i]);
-    }
-
-    for (let i = 0; i < buffer.uvs.length; i++) {
-        uvs.push(buffer.uvs[i]);
-    }
-
-    // Décaler les indices pour les nouveaux sommets
-    for (const index of buffer.indices) {
-        indices.push(index + vertexOffset);
-    }
-
-    // Un seul groupe par matériau
-    geometry.addGroup(
-        start,
-        buffer.indices.length,
-        materialIndex
+if (solidGeometry) {
+    this.mesh = new THREE.Mesh(
+        solidGeometry,
+        CHUNK_MATERIALS
     );
 
-    vertexOffset += buffer.positions.length / 3;
-});
+    this.mesh.position.set(offsetX, 0, offsetZ);
+    this.mesh.userData.chunk = this;
 
-// Attributs de la géométrie
-geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(positions, 3)
-);
+    this.scene.add(this.mesh);
+}
 
-geometry.setAttribute(
-    "normal",
-    new THREE.Float32BufferAttribute(normals, 3)
-);
+if (waterGeometry) {
+    this.waterMesh = new THREE.Mesh(
+        waterGeometry,
+        CHUNK_MATERIALS
+    );
 
-geometry.setAttribute(
-    "uv",
-    new THREE.Float32BufferAttribute(uvs, 2)
-);
+    this.waterMesh.position.set(offsetX, 0, offsetZ);
+    this.waterMesh.renderOrder = 1;
+    this.waterMesh.userData.chunk = this;
 
-geometry.setIndex(indices);
-
-        // ======================================
-        // BOUNDING SPHERE
-        // ======================================
-
-        geometry.computeBoundingSphere();
-
-        // ======================================
-        // CRÉER LE MESH
-        // ======================================
-
-        this.mesh =
-            new THREE.Mesh(
-
-                geometry,
-
-                CHUNK_MATERIALS
-
-            );
-
+    this.scene.add(this.waterMesh);
+}   
         // ======================================
         // POSITION DU CHUNK
         // ======================================
@@ -849,10 +872,14 @@ geometry.setIndex(indices);
 unload() {
     if (this.mesh) {
         this.scene.remove(this.mesh);
-
         this.mesh.geometry.dispose();
-
         this.mesh = null;
+    }
+
+    if (this.waterMesh) {
+        this.scene.remove(this.waterMesh);
+        this.waterMesh.geometry.dispose();
+        this.waterMesh = null;
     }
 }
 

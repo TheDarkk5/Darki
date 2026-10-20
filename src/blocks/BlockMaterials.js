@@ -89,6 +89,21 @@ const oreMaterial = (name) => new THREE.MeshLambertMaterial({
 const craftingTableTopMaterial = createMaterial(craftingTableTop);
 const craftingTableSideMaterial = createMaterial(craftingTableSide);
 const craftingTableFrontMaterial = createMaterial(craftingTableFront);
+
+export const waterTexture = new THREE.TextureLoader().load(
+    "/textures/blocks/water_flow.png"
+);
+
+waterTexture.magFilter = THREE.NearestFilter;
+waterTexture.minFilter = THREE.NearestFilter;
+waterTexture.wrapS = THREE.RepeatWrapping;
+waterTexture.wrapT = THREE.RepeatWrapping;
+
+export const WATER_FRAMES = 32;
+
+waterTexture.repeat.set(1, 1 / WATER_FRAMES);
+waterTexture.offset.set(0, 1 - 1 / WATER_FRAMES);
+
 // ================================
 // BLOCS
 // ================================
@@ -139,10 +154,11 @@ export const BLOCK_MATERIALS = {
         craftingTableSideMaterial  // Côté arrière
     ],
 
-    WATER: new THREE.MeshLambertMaterial({
-    color: 0x3489db,
+WATER: new THREE.MeshLambertMaterial({
+    map: waterTexture,
+    color: 0x4a9fe8,
     transparent: true,
-    opacity: 0.65,
+    opacity: 0.75,
     depthWrite: false,
     side: THREE.DoubleSide
 }),
