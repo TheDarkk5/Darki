@@ -470,20 +470,14 @@ generate() {
                 let blockId = BLOCK.AIR.id;
 
                 if (y <= terrainHeight) {
-                    blockId = generator.getBlock(
-                        worldX,
-                        y,
-                        worldZ
-                    );
-                } else {
+                    blockId = generator.getBlock(worldX, y, worldZ);
+                } else if (y <= generator.seaLevel) {
+                    blockId = BLOCK.WATER.id;
                     // Les arbres peuvent dépasser la surface.
                     // On conserve leur génération complète
                     // pour les frontières et les terrains voisins.
-                    blockId = this.treeGenerator.getBlock(
-                        worldX,
-                        y,
-                        worldZ
-                    );
+                } else {    
+                    blockId = this.treeGenerator.getBlock(worldX, y, worldZ);
                 }
 
                 const index =
@@ -643,25 +637,30 @@ if (
     );
 }
 
+const isWater = block === BLOCK.WATER.id;
+const neighborIsWater = neighbor === BLOCK.WATER.id;
+
 const isLeaves = block === BLOCK.OAK_LEAVES.id;
 const neighborIsLeaves = neighbor === BLOCK.OAK_LEAVES.id;
 
-// Air : la face est visible
-if (neighbor === BLOCK.AIR.id) {
-    // On conserve la face
+let visible = false;
+
+if (isWater) {
+    // Eau contre air : visible
+    // Eau contre eau : cachée
+    visible = neighbor === BLOCK.AIR.id;
+} else if (neighborIsWater) {
+    // Blocs solides contre eau : face visible
+    visible = true;
+} else if (neighbor === BLOCK.AIR.id) {
+    visible = true;
+} else if (isLeaves && neighborIsLeaves) {
+    visible = false;
+} else if (!isLeaves && neighborIsLeaves) {
+    visible = true;
 }
-// Feuilles contre feuilles : face inutile
-else if (isLeaves && neighborIsLeaves) {
-    continue;
-}
-// Bloc solide contre feuilles : face visible
-else if (!isLeaves && neighborIsLeaves) {
-    // On conserve la face
-}
-// Feuilles contre bloc solide : face cachée
-else {
-    continue;
-}
+
+if (!visible) continue;
 
 // ==============================
 // MATERIAL DE LA FACE

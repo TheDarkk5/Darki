@@ -249,21 +249,14 @@ generateWorld() {
     // SOLIDE ?
     // ==========================================
 
-    isSolidBlock(
-        x,
-        y,
-        z
-    ) {
+isSolidBlock(x, y, z) {
+    const block = this.getBlock(x, y, z);
 
-        return (
-            this.getBlock(
-                x,
-                y,
-                z
-            ) !== BLOCK.AIR.id
-        );
-
-    }
+    return (
+        block !== BLOCK.AIR.id &&
+        block !== BLOCK.WATER.id
+    );
+}
 
 setBlock(
     worldX,
