@@ -32,7 +32,8 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.CRAFTING_TABLE[0], // 15 - Côtés
     BLOCK_MATERIALS.CRAFTING_TABLE[2], // 16 - Dessus
     BLOCK_MATERIALS.CRAFTING_TABLE[4], // 17 - Devant
-    BLOCK_MATERIALS.WATER, // 18 - Eau
+    BLOCK_MATERIALS.WATER[0], // 18 - Eau calme
+    BLOCK_MATERIALS.WATER[1], // 19 - Eau courante
 ];
 
 function createChunkGeometry(materialBuffers, materialIndices) {
@@ -385,7 +386,13 @@ export class Chunk {
         if (normal[2] === 1) return 17;
         return 15;
     }
-    if (blockId === BLOCK.WATER.id) return 18;
+    if (blockId === BLOCK.WATER.id) {
+        // Surface supérieure : eau calme
+        if (normal[1] === 1) return 18;
+
+        // Côtés et dessous : eau courante
+        return 19;
+    }
 }
 
 // ==========================================
@@ -793,13 +800,11 @@ buffer.indices.push(
 
         }
 
-const waterMaterialIndex = CHUNK_MATERIALS.indexOf(
-    BLOCK_MATERIALS.WATER
-);
+const waterMaterialIndices = [18, 19];
 
 const solidMaterialIndices = CHUNK_MATERIALS
     .map((_, index) => index)
-    .filter(index => index !== waterMaterialIndex);
+    .filter(index => !waterMaterialIndices.includes(index));
 
 const solidGeometry = createChunkGeometry(
     materialBuffers,
@@ -808,7 +813,7 @@ const solidGeometry = createChunkGeometry(
 
 const waterGeometry = createChunkGeometry(
     materialBuffers,
-    [waterMaterialIndex]
+    waterMaterialIndices
 );
 
 const offsetX = this.chunkX * Chunk.SIZE;
@@ -837,7 +842,7 @@ if (waterGeometry) {
     this.waterMesh.userData.chunk = this;
 
     this.scene.add(this.waterMesh);
-}   
+}  
     }
 
 unload() {

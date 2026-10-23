@@ -90,19 +90,27 @@ const craftingTableTopMaterial = createMaterial(craftingTableTop);
 const craftingTableSideMaterial = createMaterial(craftingTableSide);
 const craftingTableFrontMaterial = createMaterial(craftingTableFront);
 
-export const waterTexture = new THREE.TextureLoader().load(
-    "/textures/blocks/water_flow.png"
-);
-
-waterTexture.magFilter = THREE.NearestFilter;
-waterTexture.minFilter = THREE.NearestFilter;
-waterTexture.wrapS = THREE.RepeatWrapping;
-waterTexture.wrapT = THREE.RepeatWrapping;
-
 export const WATER_FRAMES = 32;
 
-waterTexture.repeat.set(1, 1 / WATER_FRAMES);
-waterTexture.offset.set(0, 1 - 1 / WATER_FRAMES);
+function loadAnimatedWater(path) {
+    const texture = loadTexture(path);
+
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+
+    texture.repeat.set(1, 1 / WATER_FRAMES);
+    texture.offset.set(0, 1 - 1 / WATER_FRAMES);
+
+    return texture;
+}
+
+export const waterStillTexture = loadAnimatedWater(
+    "/textures/blocks/water_still.png"
+);
+
+export const waterFlowTexture = loadAnimatedWater(
+    "/textures/blocks/water_flow.png"
+);
 
 // ================================
 // BLOCS
@@ -154,17 +162,26 @@ export const BLOCK_MATERIALS = {
         craftingTableSideMaterial  // Côté arrière
     ],
 
-WATER: new THREE.MeshLambertMaterial({
-    map: waterTexture,
-    color: 0x78c8ff,
-    transparent: true,
-    opacity: 0.88,
-    depthWrite: false,
-    depthTest: true,
-    side: THREE.FrontSide,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1
-}),
+WATER: [
+    // Index 0 : surface calme
+    new THREE.MeshLambertMaterial({
+        map: waterStillTexture,
+        color: 0x78c8ff,
+        transparent: true,
+        opacity: 0.85,
+        depthWrite: false,
+        side: THREE.FrontSide
+    }),
+
+    // Index 1 : côtés animés
+    new THREE.MeshLambertMaterial({
+        map: waterFlowTexture,
+        color: 0x78c8ff,
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false,
+        side: THREE.FrontSide
+    })
+],
 
 };
