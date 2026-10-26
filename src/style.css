@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Minecraft";
+    src: url("/fonts/minecraft.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -116,7 +124,7 @@ canvas {
     border: 2px solid #000;
     background: #777;
     color: white;
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
     font-size: 18px;
     cursor: pointer;
     box-shadow:
@@ -784,4 +792,12 @@ canvas {
         center / cover no-repeat;
 
     z-index: 101;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: "Minecraft", monospace;
 }
