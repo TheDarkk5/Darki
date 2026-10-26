@@ -238,6 +238,7 @@ getUnderwaterBlock(x, z) {
     return BLOCK.SAND.id;
 }
 
+
 getBlock(x, y, z) {
     if (y < 0 || y >= 128) {
         return BLOCK.AIR.id;
@@ -245,31 +246,14 @@ getBlock(x, y, z) {
 
     const biome = this.biomes.getBiome(x, z);
     const height = this.getHeight(x, z);
+
     const isUnderwater = height < this.seaLevel;
-    // Air au-dessus du terrain
+
+    // Eau au-dessus du terrain
     if (y > height) {
         return y <= this.seaLevel
             ? BLOCK.WATER.id
             : BLOCK.AIR.id;
-    }
-
-    // Surface du biome
-    if (y === height) {
-        if (biome === BIOME.DESERT) return BLOCK.SAND.id;
-        if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
-        if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
-
-        return BLOCK.GRASS.id;
-    }
-
-    if (y === height) {
-        if (isUnderwater) {
-            return BLOCK.SAND.id;
-        }
-    }
-
-    if (y === height && height < this.seaLevel) {
-        return this.getUnderwaterBlock(worldX, worldZ);
     }
 
     // Grottes souterraines
@@ -280,26 +264,54 @@ getBlock(x, y, z) {
         return BLOCK.AIR.id;
     }
 
-    // Couches proches de la surface
+    // Fond sous-marin
+    if (isUnderwater) {
+        const depth = height - y;
+
+        // Surface + 3 blocs de profondeur
+        if (depth < 3) {
+            return this.getUnderwaterBlock(x, z);
+        }
+    }
+
+    // Surface normale
+    if (y === height) {
+        if (biome === BIOME.DESERT) {
+            return BLOCK.SAND.id;
+        }
+
+        if (biome === BIOME.SNOW) {
+            return BLOCK.SNOW.id;
+        }
+
+        if (biome === BIOME.MOUNTAINS) {
+            return BLOCK.STONE.id;
+        }
+
+        return BLOCK.GRASS.id;
+    }
+
+    // Couches sous la surface
     if (y >= height - 3) {
-        if (biome === BIOME.DESERT) return BLOCK.SAND.id;
-        if (biome === BIOME.SNOW) return BLOCK.SNOW.id;
-        if (biome === BIOME.MOUNTAINS) return BLOCK.STONE.id;
+        if (biome === BIOME.DESERT) {
+            return BLOCK.SAND.id;
+        }
+
+        if (biome === BIOME.SNOW) {
+            return BLOCK.SNOW.id;
+        }
+
+        if (biome === BIOME.MOUNTAINS) {
+            return BLOCK.STONE.id;
+        }
 
         return BLOCK.DIRT.id;
     }
 
-    if (height < this.seaLevel) {
-    const depth = height - y;
-
-    if (depth >= 0 && depth < 3) {
-        return BLOCK.SAND.id;
-    }
-}
-
     // Pierre et minerais
     return this.ores.getBlock(x, y, z);
 }
+
 
 getBiome(x, z) {
     return this.biomes.getBiome(
