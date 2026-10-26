@@ -770,3 +770,18 @@ canvas {
 #main-menu {
     animation: menuPanorama 40s ease-in-out infinite;
 }
+
+#options-menu {
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0.55)
+        ),
+        url("/images/menu-background2.png")
+        center / cover no-repeat;
+
+    z-index: 101;
+}
