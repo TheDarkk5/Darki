@@ -291,6 +291,7 @@ function openMainMenu() {
     gameStarted = false;
 
     mainMenu.style.display = "flex";
+    mainMenu.style.backgroundImage = "none";    
     hud.style.display = "none";
     crosshair.style.display = "none";
     instructions.style.display = "none";
