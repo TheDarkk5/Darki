@@ -289,8 +289,8 @@ getBlock(x, y, z) {
         return BLOCK.DIRT.id;
     }
 
-    if (terrainHeight < this.seaLevel) {
-    const depth = terrainHeight - y;
+    if (height < this.seaLevel) {
+    const depth = height - y;
 
     if (depth >= 0 && depth < 3) {
         return BLOCK.SAND.id;
