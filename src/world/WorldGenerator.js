@@ -224,6 +224,19 @@ getHeightCacheStats() {
     // ==========================================
     // TYPE DE BLOC
     // ==========================================
+getUnderwaterBlock(x, z) {
+    const value = this.noise2D(x * 0.035, z * 0.035);
+
+    if (value < -0.45) {
+        return BLOCK.CLAY.id;
+    }
+
+    if (value < -0.15) {
+        return BLOCK.GRAVEL.id;
+    }
+
+    return BLOCK.SAND.id;
+}
 
 getBlock(x, y, z) {
     if (y < 0 || y >= 128) {
@@ -232,7 +245,7 @@ getBlock(x, y, z) {
 
     const biome = this.biomes.getBiome(x, z);
     const height = this.getHeight(x, z);
-
+    const isUnderwater = terrainHeight < this.seaLevel;
     // Air au-dessus du terrain
     if (y > height) {
         return y <= this.seaLevel
@@ -248,6 +261,16 @@ getBlock(x, y, z) {
 
         return BLOCK.GRASS.id;
     }
+
+    if (y === terrainHeight) {
+        if (isUnderwater) {
+            return BLOCK.SAND.id;
+        }
+    }
+
+    if (y === terrainHeight && terrainHeight < this.seaLevel) {
+    return this.getUnderwaterBlock(worldX, worldZ);
+}
 
     // Grottes souterraines
     if (
@@ -265,6 +288,14 @@ getBlock(x, y, z) {
 
         return BLOCK.DIRT.id;
     }
+
+    if (terrainHeight < this.seaLevel) {
+    const depth = terrainHeight - y;
+
+    if (depth >= 0 && depth < 3) {
+        return BLOCK.SAND.id;
+    }
+}
 
     // Pierre et minerais
     return this.ores.getBlock(x, y, z);
