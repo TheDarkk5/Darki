@@ -245,7 +245,7 @@ getBlock(x, y, z) {
 
     const biome = this.biomes.getBiome(x, z);
     const height = this.getHeight(x, z);
-    const isUnderwater = terrainHeight < this.seaLevel;
+    const isUnderwater = height < this.seaLevel;
     // Air au-dessus du terrain
     if (y > height) {
         return y <= this.seaLevel
@@ -262,15 +262,15 @@ getBlock(x, y, z) {
         return BLOCK.GRASS.id;
     }
 
-    if (y === terrainHeight) {
+    if (y === height) {
         if (isUnderwater) {
             return BLOCK.SAND.id;
         }
     }
 
-    if (y === terrainHeight && terrainHeight < this.seaLevel) {
-    return this.getUnderwaterBlock(worldX, worldZ);
-}
+    if (y === height && height < this.seaLevel) {
+        return this.getUnderwaterBlock(worldX, worldZ);
+    }
 
     // Grottes souterraines
     if (
