@@ -728,3 +728,45 @@ canvas {
     width: 180px;
     max-width: 100%;
 }
+
+/* Fond du menu principal */
+#main-menu {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.45)
+        ),
+        url("/images/menu-background.png");
+
+    background-size: cover;
+    background-position: center;
+
+    z-index: 100;
+}
+
+/* Léger mouvement panoramique */
+@keyframes menuPanorama {
+    0% {
+        background-position: 45% center;
+    }
+
+    50% {
+        background-position: 55% center;
+    }
+
+    100% {
+        background-position: 45% center;
+    }
+}
+
+#main-menu {
+    animation: menuPanorama 40s ease-in-out infinite;
+}

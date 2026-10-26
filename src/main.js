@@ -73,7 +73,7 @@ document
     .getElementById("game")
     .appendChild(renderer.domElement);
 
-
+renderer.domElement.style.display = "none";
 // ==========================================
 // LUMIERE AMBIANTE
 // ==========================================
@@ -209,7 +209,7 @@ const hud =
     );
 
 let gameStarted = false;
-
+mainMenu.style.display = "flex";
 
 // ==========================================
 // JOUER
@@ -217,6 +217,8 @@ let gameStarted = false;
 
 playButton.addEventListener("click", () => {
         gameStarted = true;
+
+        renderer.domElement.style.display = "block";
 
         mainMenu.style.display = "none";
         optionsMenu.style.display = "none";
