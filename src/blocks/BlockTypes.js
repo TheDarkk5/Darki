@@ -123,6 +123,22 @@ export const BLOCK = {
     id: 15,
     name: "Eau"
 },
+
+    CLAY: {
+        id: 16,
+        name: "Argile",
+        material: "CLAY",
+        texture: "/textures/blocks/clay.png",
+        solid: true
+    },
+
+    GRAVEL: {
+        id: 17,
+        name: "Gravier",
+        material: "GRAVEL",
+        texture: "/textures/blocks/gravel.png",
+        solid: true
+    }
 };
 
 export function getBlockById(id) {

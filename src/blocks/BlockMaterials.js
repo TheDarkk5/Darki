@@ -82,6 +82,12 @@ const snowMaterial = new THREE.MeshLambertMaterial({
     map: snow
 });
 
+const clayMaterial = new THREE.MeshLambertMaterial({
+    map: loadTexture("/textures/blocks/clay.png")
+});
+const gravelMaterial = new THREE.MeshLambertMaterial({
+    map: loadTexture("/textures/blocks/gravel.png")
+});
 const oreMaterial = (name) => new THREE.MeshLambertMaterial({
     map: loadTexture(`/textures/blocks/${name}.png`)
 });
@@ -184,4 +190,6 @@ WATER: [
     })
 ],
 
+    CLAY: clayMaterial,
+    GRAVEL: gravelMaterial
 };

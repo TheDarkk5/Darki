@@ -34,6 +34,8 @@ const CHUNK_MATERIALS = [
     BLOCK_MATERIALS.CRAFTING_TABLE[4], // 17 - Devant
     BLOCK_MATERIALS.WATER[0], // 18 - Eau calme
     BLOCK_MATERIALS.WATER[1], // 19 - Eau courante
+    BLOCK_MATERIALS.GRAVEL, // 20
+    BLOCK_MATERIALS.CLAY,   // 21
 ];
 
 function createChunkGeometry(materialBuffers, materialIndices) {
@@ -393,6 +395,8 @@ export class Chunk {
         // Côtés et dessous : eau courante
         return 19;
     }
+    if (blockId === BLOCK.GRAVEL.id) return 20;
+    if (blockId === BLOCK.CLAY.id) return 21;
 }
 
 // ==========================================
