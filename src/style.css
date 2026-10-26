@@ -269,7 +269,7 @@ canvas {
 
 #selected-block-name {
     color: white;
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
     font-size: 16px;
     text-align: center;
     margin-bottom: 8px;
@@ -344,7 +344,7 @@ canvas {
     padding: 12px 0;
     background: rgba(0, 0, 0, 0.45);
     z-index: 500;
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
 }
 
 .inventory-window {
