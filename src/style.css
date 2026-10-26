@@ -154,7 +154,7 @@ canvas {
     bottom: 10px;
     left: 10px;
     color: white;
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
     font-size: 14px;
     text-shadow:
         1px 1px black;
@@ -172,7 +172,7 @@ canvas {
     z-index: 100;
     pointer-events: none;
     display: none;
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
 }
 
 /* =================================
@@ -613,7 +613,7 @@ canvas {
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.55);
-    font-family: monospace;
+    font-family: "Minecraft", monospace;
 }
 
 .crafting-table-window {
