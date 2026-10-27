@@ -198,10 +198,7 @@ const crosshair =
         "crosshair"
     );
 
-const instructions =
-    document.getElementById(
-        "instructions"
-    );
+const fps = document.getElementById("fps-counter");
 
 const hud =
     document.getElementById(
@@ -210,6 +207,7 @@ const hud =
 
 let gameStarted = false;
 mainMenu.style.display = "flex";
+fps.style.display = "none";
 
 // ==========================================
 // JOUER
@@ -224,8 +222,7 @@ playButton.addEventListener("click", () => {
         optionsMenu.style.display = "none";
 
         hud.style.display = "block";
-        crosshair.style.display = "block";
-        instructions.style.display = "block";
+        fps.style.display = "block";
 
         player.controls.lock();
     
@@ -294,7 +291,7 @@ function openMainMenu() {
     mainMenu.style.backgroundImage = "none";    
     hud.style.display = "none";
     crosshair.style.display = "none";
-    instructions.style.display = "none";
+    fps.style.display = "none";
 
     if (player.controls.isLocked) {
         player.controls.unlock();
