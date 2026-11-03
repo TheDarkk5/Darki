@@ -125,6 +125,8 @@ window.addEventListener(
             window.innerHeight
         );
 
+        thirdPersonCamera.resize(camera.aspect);
+
     }
 );
 
@@ -497,14 +499,13 @@ if (
 ) {
     player.update(deltaTime);
 
-    // Position des yeux avant de déplacer la caméra
     const eyePosition = camera.position.clone();
 
-    // Orientation du joueur
-    const yaw = camera.rotation.y;
-    const pitch = camera.rotation.x;
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
 
-    // Position du skin
+    const yaw = Math.atan2(-direction.x, -direction.z);
+
     playerModel.update(
         new THREE.Vector3(
             eyePosition.x,
@@ -514,20 +515,20 @@ if (
         yaw
     );
 
-    // Troisième personne
-    thirdPersonCamera.update(
-        eyePosition,
-        yaw,
-        pitch
-    );
+    thirdPersonCamera.update();
 
     hand.update(deltaTime);
     blockInteraction.update();
 }
     
     updateDebugMenu(Math.round(1 / Math.max(deltaTime, 0.001)));
-    renderer.render(scene, camera);
+    renderer.render(
+    scene,
+    thirdPersonCamera.getActiveCamera()
+);
+
 }
+
 
 animate();
 
