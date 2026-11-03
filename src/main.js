@@ -14,6 +14,8 @@ import { CraftingTable } from "./ui/CraftingTable.js";
 import { BIOME } from "./world/BiomeGenerator.js";
 import { DayNightCycle } from "./systems/DayNightCycle.js";
 import { SkySystem } from "./systems/SkySystem.js";
+import { ThirdPersonCamera } from "./player/ThirdPersonCamera.js";
+import { PlayerModel } from "./player/PlayerModel.js";
 import { WaterAnimation } from "./systems/WaterAnimation.js";
 // ==========================================
 // SCENE
@@ -134,6 +136,23 @@ const player = new Player(
     renderer.domElement,
     world
 );
+
+const playerModel = new PlayerModel(scene);
+const thirdPersonCamera = new ThirdPersonCamera(
+    camera,
+    playerModel,
+    world
+);
+
+window.addEventListener("keydown", (event) => {
+    if (event.code !== "F5") return;
+
+    if (!gameStarted) return;
+
+    event.preventDefault();
+
+    thirdPersonCamera.switchMode();
+});
 
 const storage = new InventoryStorage();
 
@@ -467,17 +486,45 @@ function animate() {
 
     // Soleil, lune et étoiles
     skySystem.update(dayNightCycle.time);
-waterAnimation.update(deltaTime);
+    waterAnimation.update(deltaTime);
     // Charger les chunks même depuis le menu principal
     world.update(camera.position);
 
-    if (gameStarted && !inventory.isOpen) {
-        if (player.controls.isLocked) {
-            player.update(deltaTime);
-            hand.update(deltaTime);
-            blockInteraction.update();
-        }
-    }
+if (
+    gameStarted &&
+    !inventory.isOpen &&
+    player.controls.isLocked
+) {
+    player.update(deltaTime);
+
+    // Position des yeux avant de déplacer la caméra
+    const eyePosition = camera.position.clone();
+
+    // Orientation du joueur
+    const yaw = player.controls.getObject().rotation.y;
+    const pitch = camera.rotation.x;
+
+    // Position du skin
+    playerModel.update(
+        new THREE.Vector3(
+            eyePosition.x,
+            eyePosition.y - 1.6,
+            eyePosition.z
+        ),
+        yaw
+    );
+
+    // Troisième personne
+    thirdPersonCamera.update(
+        eyePosition,
+        yaw,
+        pitch
+    );
+
+    hand.update(deltaTime);
+    blockInteraction.update();
+}
+    
     updateDebugMenu(Math.round(1 / Math.max(deltaTime, 0.001)));
     renderer.render(scene, camera);
 }
