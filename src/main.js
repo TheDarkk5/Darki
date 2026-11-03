@@ -501,7 +501,7 @@ if (
     const eyePosition = camera.position.clone();
 
     // Orientation du joueur
-    const yaw = player.controls.getObject().rotation.y;
+    const yaw = camera.rotation.y;
     const pitch = camera.rotation.x;
 
     // Position du skin
