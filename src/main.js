@@ -477,7 +477,6 @@ const skySystem = new SkySystem(scene, camera);
 
 
 const skinMenu = document.getElementById("skin-menu");
-const mainMenu = document.getElementById("main-menu");
 
 const skinPreview = document.getElementById(
     "skin-preview-image"
