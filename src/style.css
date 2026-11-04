@@ -801,3 +801,73 @@ select,
 textarea {
     font-family: "Minecraft", monospace;
 }
+
+.skin-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.skin-menu.hidden {
+    display: none;
+}
+
+.skin-panel {
+    width: min(420px, 90vw);
+    padding: 24px;
+
+    background: #252525;
+    border: 3px solid #111;
+    box-shadow: 0 8px 30px #0008;
+
+    color: white;
+    text-align: center;
+}
+
+.skin-preview {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.skin-preview img {
+    width: 192px;
+    height: 192px;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.skin-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.skin-buttons button {
+    flex: 1;
+}
+
+.skin-upload {
+    display: block;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    background: #555;
+    color: white;
+    cursor: pointer;
+}
+
+.skin-upload:hover {
+    background: #666;
+}
+
+#skin-error {
+    color: #ff7777;
+    min-height: 20px;
+}

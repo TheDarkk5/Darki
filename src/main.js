@@ -17,6 +17,7 @@ import { SkySystem } from "./systems/SkySystem.js";
 import { ThirdPersonCamera } from "./player/ThirdPersonCamera.js";
 import { PlayerModel } from "./player/PlayerModel.js";
 import { WaterAnimation } from "./systems/WaterAnimation.js";
+import { SkinManager } from "./systems/SkinManager.js";
 // ==========================================
 // SCENE
 // ==========================================
@@ -140,6 +141,10 @@ const player = new Player(
 );
 
 const playerModel = new PlayerModel(scene);
+const skinManager = new SkinManager(playerModel);
+
+skinManager.loadSavedSkin().catch(console.error);
+
 const thirdPersonCamera = new ThirdPersonCamera(
     camera,
     playerModel,
@@ -469,6 +474,69 @@ const dayNightCycle = new DayNightCycle(
 );
 
 const skySystem = new SkySystem(scene, camera);
+
+
+const skinMenu = document.getElementById("skin-menu");
+const mainMenu = document.getElementById("main-menu");
+
+const skinPreview = document.getElementById(
+    "skin-preview-image"
+);
+
+const skinError = document.getElementById("skin-error");
+
+document.getElementById("open-skin-menu")
+    .addEventListener("click", () => {
+        mainMenu.style.display = "none";
+        skinMenu.classList.remove("hidden");
+    });
+
+document.getElementById("skin-back")
+    .addEventListener("click", () => {
+        skinMenu.classList.add("hidden");
+        mainMenu.style.display = "flex";
+    });
+
+async function chooseSkin(name) {
+    try {
+        skinError.textContent = "";
+
+        await skinManager.setSkin(name);
+
+        skinPreview.src = skinManager.skins[name];
+    } catch (error) {
+        skinError.textContent = error.message;
+    }
+}
+
+document.getElementById("skin-steve")
+    .addEventListener("click", () => chooseSkin("steve"));
+
+document.getElementById("skin-alex")
+    .addEventListener("click", () => chooseSkin("alex"));
+
+document.getElementById("skin-upload")
+    .addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            skinError.textContent = "";
+
+            await skinManager.importSkin(file);
+
+            const savedSkin = localStorage.getItem(
+                "darkcraft-custom-skin"
+            );
+
+            if (savedSkin) {
+                skinPreview.src = savedSkin;
+            }
+        } catch (error) {
+            skinError.textContent = error.message;
+        }
+    });
+
 // ==========================================
 // GAME LOOP
 // ==========================================
